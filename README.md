@@ -7,7 +7,7 @@ Run a rundown of clips to an audience on a big screen, while you keep a private 
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![Dependencies: none](https://img.shields.io/badge/dependencies-0-brightgreen) ![Vanilla JS](https://img.shields.io/badge/vanilla-JS-yellow)
 
-> **Note:** the interface is currently in **Hebrew (RTL)**. It works great as-is; English / i18n is on the roadmap and a very welcome contribution (see below).
+> **Bilingual:** ships with **Hebrew (RTL)** and **English (LTR)** — switch anytime in **Settings (⚙)**. (A few dialogs are still Hebrew-only; completing coverage is a welcome contribution.)
 
 ---
 
@@ -73,13 +73,14 @@ The control and audience views are **two instances of the same file** — the se
 
 ## Customize / white-label
 
-Everything is in **`index.html`**. To rebrand:
+**No code needed for the basics.** Open **Settings (⚙)** in the app and change the **product name, tagline, accent colors, and language** — with a live preview. Changes are saved in the browser.
+
+For deeper changes, edit **`index.html`**:
 
 | What | Where |
 |------|-------|
-| **Name & tagline** | Search for `OpenStage` and `LIVE · STAGE CONTROL` in the header markup |
-| **Theme colors** | The `:root { … }` CSS block near the top (`--brand`, `--brand-2`, `--gold`, backgrounds…) |
-| **Default lists** | The `state = load() || { … lists:[ … ] }` object in the script |
+| **Full color palette** | The `:root { … }` CSS block near the top (backgrounds, text, semantic colors) |
+| **Default lists** (fresh installs) | The `state = load() || { … lists:[ … ] }` object in the script |
 | **Built-in sound** | Set `CONFIG.builtInSound` (near the top of the script) to a filename placed next to `index.html`, e.g. `'sound.mp3'`. Leave `''` to let users pick their own. |
 | **Initial output window size** | The `window.open(..., 'width=1280,height=720')` call |
 
@@ -96,7 +97,8 @@ Vanilla JavaScript, no build step, no dependencies. Uses **BroadcastChannel**, *
 
 ## Roadmap
 
-- English / i18n and a language toggle
+- Complete i18n coverage (a few dialogs & messages are still Hebrew-only)
+- More languages
 - Real video thumbnails in the list
 - Export / import a show (all lists + order) to a file
 - Per-image display duration

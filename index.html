@@ -222,6 +222,11 @@
   .toast{position:fixed;bottom:44px;left:50%;transform:translateX(-50%) translateY(20px);background:#1c2330;border:1px solid var(--line-2);color:var(--text);padding:11px 20px;border-radius:13px;font-size:13.5px;font-weight:650;box-shadow:var(--sh-2);opacity:0;pointer-events:none;transition:.26s;z-index:60}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .setrow>span{font-size:13.5px;font-weight:600;color:var(--dim)}
+  .setrow input[type=text],.setrow select{background:var(--s3);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 11px;font-family:inherit;font-size:13px;min-width:190px;text-align:start}
+  .setrow input[type=color]{width:40px;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--s3);cursor:pointer;padding:2px}
+  .colspair{display:flex;gap:8px}
   .checkwrap{position:fixed;inset:0;z-index:90;display:none;place-items:center;background:rgba(8,10,14,.75);backdrop-filter:blur(4px)}
   .checkwrap.show{display:grid}
   .check-card{width:min(480px,92vw);background:var(--s1);border:1px solid var(--line-2);border-radius:var(--r-lg);box-shadow:var(--sh-2);overflow:hidden}
@@ -288,17 +293,18 @@
       <div><div class="brand-name">OpenStage</div><div class="brand-sub">LIVE · STAGE CONTROL</div></div>
     </div>
     <div class="spacer"></div>
-    <button class="btn" id="btnCheck" title="בדיקת מערכת — לוודא שהכל עובד ונשמר"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>בדיקה</button>
-    <button class="btn" id="btnRelink" title="לחברי מחדש קבצים אחרי פתיחה מחדש"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6M10.5 6.5l1-1a4 4 0 0 1 6 6l-1 1M13.5 17.5l-1 1a4 4 0 0 1-6-6l1-1"/></svg>חבר קבצים</button>
+    <button class="btn" id="btnSettings" data-t="settings" title="Settings / הגדרות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>settings</button>
+    <button class="btn" id="btnCheck" data-t="check" title="בדיקת מערכת — לוודא שהכל עובד ונשמר"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>בדיקה</button>
+    <button class="btn" id="btnRelink" data-t="relink" title="לחברי מחדש קבצים אחרי פתיחה מחדש"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6M10.5 6.5l1-1a4 4 0 0 1 6 6l-1 1M13.5 17.5l-1 1a4 4 0 0 1-6-6l1-1"/></svg>חבר קבצים</button>
     <button class="btn" id="btnProjector" title="פתחי חלון נפרד להקרנה על המקרן"><span class="liveDot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span class="lbl">תצוגת מקרן</span></button>
-    <button class="btn accent" id="btnFull" title="מסך מלא בחלון הזה (למסך יחיד)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>מסך מלא</button>
+    <button class="btn accent" id="btnFull" data-t="fullscreen" title="מסך מלא בחלון הזה (למסך יחיד)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>מסך מלא</button>
   </header>
 
   <div class="main">
     <aside class="sidebar">
-      <div class="side-h"><span class="t">רשימות הקרנה</span></div>
+      <div class="side-h"><span class="t" data-t="playlists">רשימות הקרנה</span></div>
       <div class="lists" id="lists"></div>
-      <div class="add-list" id="addList"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>רשימה חדשה</div>
+      <div class="add-list" id="addList" data-t="newlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>רשימה חדשה</div>
     </aside>
 
     <div class="content">
@@ -307,9 +313,9 @@
           <canvas id="monBgCanvas" width="64" height="36"></canvas>
           <img id="monImg" alt="">
           <video id="video" playsinline></video>
-          <div class="mon-empty" id="monEmpty"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 15h18M8 4v16M16 4v16"/></svg><div class="t">בחרי סרטון מהרשימה כדי להקרין</div></div></div>
-          <div class="mon-chip" id="monChip"><span class="rec"></span><span id="monChipTxt">מוכן</span></div>
-          <div class="prev-tag hidden" id="previewTag">תצוגה מקדימה · הקול במקרן</div>
+          <div class="mon-empty" id="monEmpty"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 15h18M8 4v16M16 4v16"/></svg><div class="t" data-t="pickclip">בחרי סרטון מהרשימה כדי להקרין</div></div></div>
+          <div class="mon-chip" id="monChip"><span class="rec"></span><span id="monChipTxt" data-t="chipReady">מוכן</span></div>
+          <div class="prev-tag hidden" id="previewTag" data-t="preview">תצוגה מקדימה · הקול במקרן</div>
           <video id="monStandbyVid" muted loop playsinline></video>
           <img id="monStandbyImg" alt="">
           <div id="monBlack"></div>
@@ -326,20 +332,20 @@
       </div>
 
       <div class="nownext">
-        <div class="nn nn-now"><span class="tag">עכשיו</span><span class="nm dim" id="nnNow">—</span></div>
-        <div class="nn nn-next"><span class="tag">הבא בתור</span><span class="nm dim" id="nnNext">—</span></div>
+        <div class="nn nn-now"><span class="tag" data-t="now">עכשיו</span><span class="nm dim" id="nnNow">—</span></div>
+        <div class="nn nn-next"><span class="tag" data-t="next">הבא בתור</span><span class="nm dim" id="nnNext">—</span></div>
       </div>
 
       <div class="outbar">
-        <span class="ob-label">בקרת מקרן</span>
-        <button class="obtn blk" id="btnBlack" title="מסך שחור מיידי (B)"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>מסך שחור</button>
-        <button class="obtn stby" id="btnStandby" title="מסך לוגו / המתנה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>לוגו המתנה</button>
+        <span class="ob-label" data-t="projctl">בקרת מקרן</span>
+        <button class="obtn blk" id="btnBlack" data-t="black" title="מסך שחור מיידי (B)"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>מסך שחור</button>
+        <button class="obtn stby" id="btnStandby" data-t="standby" title="מסך לוגו / המתנה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>לוגו המתנה</button>
         <button class="obtn setstby" id="btnSetStandby" title="בחרי סרטון שיוצג במסך ההמתנה (בלולאה)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14V4M8.5 7.5 12 4l3.5 3.5"/><rect x="4" y="14" width="16" height="6" rx="1.6"/></svg><span id="setStandbyLbl">סרטון המתנה</span></button>
-        <button class="obtn sbaud" id="btnStandbyAudio" title="השמעת הקול של סרטון ההמתנה על המקרן"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M16 9a3 3 0 0 1 0 6M19 6a7 7 0 0 1 0 12"/></svg>קול בהמתנה</button>
+        <button class="obtn sbaud" id="btnStandbyAudio" data-t="standbyAudio" title="השמעת הקול של סרטון ההמתנה על המקרן"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M16 9a3 3 0 0 1 0 6M19 6a7 7 0 0 1 0 12"/></svg>קול בהמתנה</button>
         <button class="obtn" id="btnFit" title="איך הווידאו ממלא את מסך המקרן (רקע מטושטש / שוליים / מילוי)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 5v14M16 5v14"/></svg><span id="fitLbl">מסגור</span></button>
-        <button class="obtn bnr" id="btnBanner" title="הצגת שם הקבוצה על המקרן"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v9H8l-4 4V5Z"/></svg>באנר שם</button>
-        <button class="obtn fade" id="btnFade" title="מעבר רך בין סרטונים"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" stroke="none"/></svg>מעבר רך</button>
-        <button class="obtn loop" id="btnLoop" title="לולאה על הסרטון הנוכחי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>לולאה</button>
+        <button class="obtn bnr" id="btnBanner" data-t="banner" title="הצגת שם הקבוצה על המקרן"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v9H8l-4 4V5Z"/></svg>באנר שם</button>
+        <button class="obtn fade" id="btnFade" data-t="fade" title="מעבר רך בין סרטונים"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" stroke="none"/></svg>מעבר רך</button>
+        <button class="obtn loop" id="btnLoop" data-t="loop" title="לולאה על הסרטון הנוכחי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>לולאה</button>
         <button class="obtn snd" id="btnSound" title="נגן/עצור את סאונד (בלולאה)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg><span id="soundLbl">סאונד</span></button>
         <button class="obtn sndfile" id="btnSoundFile" title="בחרי קובץ אודיו לסאונד"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14V4M8.5 7.5 12 4l3.5 3.5"/><rect x="4" y="14" width="16" height="6" rx="1.6"/></svg><span id="soundFileLbl">קובץ סאונד</span></button>
         <div class="vol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M16 9a3 3 0 0 1 0 6M19 6a7 7 0 0 1 0 12"/></svg><input type="range" id="vol" min="0" max="100" value="100"></div>
@@ -358,7 +364,7 @@
           <div class="qtitle"><span class="ic" id="qIcon">⭐</span><span id="qName">רשימה 1</span><span class="qcount" id="qCount"></span></div>
           <div class="spacer"></div>
           <span class="qtotal hidden" id="qTotal"></span>
-          <button class="addbtn" id="btnAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>הוסף סרטונים</button>
+          <button class="addbtn" id="btnAdd" data-t="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>הוסף סרטונים</button>
         </div>
         <div class="queue" id="queue"></div>
       </div>
@@ -370,7 +376,7 @@
         <div class="sep"></div>
         <div id="stMode">עצירה אחרי כל סרטון</div>
         <div class="spacer"></div>
-        <div class="hints"><b>רווח</b> נגן/עצור &nbsp;·&nbsp; <b>←</b> הבא &nbsp;·&nbsp; <b>→</b> הקודם &nbsp;·&nbsp; <b>B</b> שחור &nbsp;·&nbsp; <b>F</b> מסך מלא</div>
+        <div class="hints" data-t="hints"><b>רווח</b> נגן/עצור &nbsp;·&nbsp; <b>←</b> הבא &nbsp;·&nbsp; <b>→</b> הקודם &nbsp;·&nbsp; <b>B</b> שחור &nbsp;·&nbsp; <b>F</b> מסך מלא</div>
         <div class="sep"></div>
         <div id="verStamp" style="font-family:var(--tc);color:var(--mute)"></div>
       </footer>
@@ -382,6 +388,15 @@
 <input type="file" id="standbyPicker" accept="video/*,image/*" class="hidden">
 <input type="file" id="soundPicker" accept="audio/*" class="hidden">
 <audio id="ctlsound" loop></audio>
+<div class="checkwrap" id="setwrap"><div class="check-card">
+  <div class="check-head"><span data-t="settingsTitle">הגדרות ומיתוג</span><button id="setClose">✕</button></div>
+  <div class="check-body">
+    <label class="setrow"><span data-t="fldName">שם המוצר</span><input id="fldName" type="text"></label>
+    <label class="setrow"><span data-t="fldTag">תת-כותרת</span><input id="fldTag" type="text"></label>
+    <label class="setrow"><span data-t="fldAccent">צבעי מותג</span><span class="colspair"><input id="fldAccent" type="color"><input id="fldAccent2" type="color"></span></label>
+    <label class="setrow"><span data-t="fldLang">שפה</span><select id="fldLang"><option value="he">עברית</option><option value="en">English</option></select></label>
+  </div>
+</div></div>
 <div class="checkwrap" id="checkwrap"><div class="check-card">
   <div class="check-head"><span>🩺 בדיקת מערכת</span><button id="checkClose">✕</button></div>
   <div class="check-body" id="checkBody"></div>
@@ -454,6 +469,7 @@ function initOutput(){
       </div>
     </div>`;
   document.body.appendChild(wrap);
+  try{ var _B=(JSON.parse(localStorage.getItem('projector-state-v1'))||{}).branding||{}; if(_B.name){var _h=wrap.querySelector('.ph-card h2'); if(_h)_h.textContent=_B.name; document.title=_B.name;} if(_B.accent)document.documentElement.style.setProperty('--brand',_B.accent); if(_B.accent2)document.documentElement.style.setProperty('--brand-2',_B.accent2); if(_B.lang)document.documentElement.setAttribute('dir',_B.lang==='he'?'rtl':'ltr'); }catch(_){}
   const pv=wrap.querySelector('#pv'),pimg=wrap.querySelector('#pimg'),bgCanvas=wrap.querySelector('#pvbgcanvas'),standbyVid=wrap.querySelector('#pjstandbyVid'),standbyImg=wrap.querySelector('#pjstandbyImg'),pjsound=wrap.querySelector('#pjsound'),blackEl=wrap.querySelector('#pjblack'),hint=wrap.querySelector('#pjhint'),unlock=wrap.querySelector('#pjunlock');
   const bnTxt=wrap.querySelector('.bn-txt');
   const bgctx=bgCanvas.getContext('2d'); const BGW=64,BGH=36;
@@ -598,9 +614,9 @@ CHAN.onmessage=e=>{
 };
 function pushOutputSettings(){ CHAN.postMessage({type:'volume',to:'output',v:state.volume}); CHAN.postMessage({type:'fade',to:'output',on:state.fade}); CHAN.postMessage({type:'loop',to:'output',on:state.loop}); CHAN.postMessage({type:'standbyAudio',to:'output',on:state.standbyAudio}); CHAN.postMessage({type:'fit',to:'output',mode:state.fitMode}); CHAN.postMessage({type:'banner',to:'output',persist:state.bannerPersist,text:lastLoaded?lastLoaded.name:''}); sendStandbyToOutput(); }
 function updateProjectorUI(){
-  const b=el('btnProjector'); b.classList.toggle('on',outputOpen); b.querySelector('.lbl').textContent=outputOpen?'מקרן מחובר':'תצוגת מקרן';
+  const b=el('btnProjector'); b.classList.toggle('on',outputOpen); b.querySelector('.lbl').textContent=outputOpen?T('projBtnOn'):T('projBtn');
   video.muted=outputOpen; el('previewTag').classList.toggle('hidden',!outputOpen);
-  const st=el('stProjector'); st.classList.toggle('live',outputOpen); st.querySelector('span:last-child').textContent=outputOpen?'מקרן מחובר · הקול יוצא למקרן':'מקרן מנותק';
+  const st=el('stProjector'); st.classList.toggle('live',outputOpen); st.querySelector('span:last-child').textContent=outputOpen?T('projOn'):T('projOff');
 }
 el('btnProjector').addEventListener('click',()=>{
   if(projectorWin&&!projectorWin.closed){projectorWin.focus();return;}
@@ -675,7 +691,7 @@ async function getStandbyFile(){
   return null;
 }
 async function sendStandbyToOutput(){ if(!outputOpen)return; const f=await getStandbyFile(); if(f) CHAN.postMessage({type:'standbyMedia',to:'output',file:f,kind:state.standbyKind||'video'}); }
-function updateStandbyUI(){ const b=el('btnSetStandby'); const has=!!state.standbyName; b.classList.toggle('on',has); el('setStandbyLbl').textContent=has?state.standbyName:'מדיית המתנה'; }
+function updateStandbyUI(){ const b=el('btnSetStandby'); const has=!!state.standbyName; b.classList.toggle('on',has); el('setStandbyLbl').textContent=has?state.standbyName:T('standbyMedia'); }
 el('btnSetStandby').addEventListener('click',async()=>{
   if(SUPPORTS_FS){
     let h; try{ [h]=await window.showOpenFilePicker({multiple:false,types:[{description:'סרטון או תמונה',accept:{'video/*':['.mp4','.mov','.m4v','.webm','.avi','.mkv','.ogv'],'image/*':['.jpg','.jpeg','.png','.gif','.webp','.bmp','.heic','.avif']}}]}); }catch(e){return;}
@@ -708,7 +724,7 @@ async function getSoundFile(){
   return null;
 }
 async function sendSoundToOutput(){ if(!outputOpen)return; const f=await getSoundFile(); if(f) CHAN.postMessage({type:'soundMedia',to:'output',file:f}); }
-function updateSoundUI(){ el('btnSoundFile').classList.toggle('on',!!state.soundName); el('soundFileLbl').textContent=state.soundName?('קובץ: '+state.soundName):'החלף קובץ'; el('btnSound').classList.toggle('on',soundPlaying); el('soundLbl').textContent = soundPlaying ? '⏹ עצור סאונד' : (state.soundName||'סאונד'); }
+function updateSoundUI(){ el('btnSoundFile').classList.toggle('on',!!state.soundName); el('soundFileLbl').textContent=state.soundName?('קובץ: '+state.soundName):T('replaceFile'); el('btnSound').classList.toggle('on',soundPlaying); el('soundLbl').textContent = soundPlaying ? ('⏹ '+T('stopSound')) : (state.soundName||T('sound')); }
 async function playSound(on){
   // הסאונד מתנגן מחלון השליטה עצמו (תמיד נשמע) — כך זה אמין ולא תלוי בחלון המקרן.
   // במחשב אחד כל האודיו יוצא לאותו רמקול ממילא, אז מספיק לנגן פעם אחת.
@@ -742,7 +758,7 @@ el('soundPicker').addEventListener('change',e=>{
 /* -------- מסגור (fit mode) -------- */
 const FIT_LABELS={blur:'רקע מטושטש',contain:'שוליים שחורים',cover:'מילוי (חיתוך)'};
 const FIT_ORDER=['blur','contain','cover'];
-function updateFitUI(){ el('fitLbl').textContent='מסגור: '+(FIT_LABELS[state.fitMode]||'רקע מטושטש'); }
+function updateFitUI(){ el('fitLbl').textContent=T('fit')+': '+(T('fit_'+state.fitMode)||''); }
 function applyFitControl(){
   const v=el('video'), sv=el('monStandbyVid'), im=el('monImg');
   const fit = state.fitMode==='cover'?'cover':'contain';
@@ -772,7 +788,7 @@ function syncMonBg(){
 el('btnFit').addEventListener('click',()=>{
   const i=FIT_ORDER.indexOf(state.fitMode); state.fitMode=FIT_ORDER[(i+1)%FIT_ORDER.length]; save();
   updateFitUI(); applyFitControl(); if(outputOpen)CHAN.postMessage({type:'fit',to:'output',mode:state.fitMode});
-  toast('מסגור: '+FIT_LABELS[state.fitMode]);
+  toast(T('fit')+': '+T('fit_'+state.fitMode));
 });
 
 /* -------- add files -------- */
@@ -855,13 +871,13 @@ async function playItem(listId,itemId){
   if(item.kind==='image'){
     try{video.pause();}catch(_){} video.removeAttribute('src');
     el('monImg').src=url; el('monImg').style.display='block'; el('video').style.display='none';
-    setChip(true,'תמונה'); setPlay(false);
+    setChip(true,T('chipImg')); setPlay(false);
     startImageProgress();
   } else {
     if(soundPlaying) playSound(false); // עוצרים ג'ינגל מעברים כשמתחיל סרטון עם קול
     el('monImg').style.display='none'; el('video').style.display='';
     video.src=url; video.muted=outputOpen; video.volume=state.volume; video.loop=state.loop;
-    setChip(true,'מוקרן כעת'); video.play().catch(()=>{}); setPlay(true);
+    setChip(true,T('chipLive')); video.play().catch(()=>{}); setPlay(true);
   }
   applyFitControl();
   if(outputOpen){ CHAN.postMessage({type:'load',to:'output',name:item.name,file,play:true,kind:item.kind}); CHAN.postMessage({type:'banner',to:'output',persist:state.bannerPersist,text:item.name,flash:true}); }
@@ -872,12 +888,12 @@ function currentIndex(){const l=listById(playing.listId);if(!l)return -1;return 
 function playNext(){const l=listById(playing.listId)||activeList();const idx=currentIndex();if(idx>=0&&idx<l.items.length-1)playItem(l.id,l.items[idx+1].id);else if(idx<0&&l.items.length)playItem(l.id,l.items[0].id);else toast('זה הסרטון האחרון ברשימה');}
 function playPrev(){const l=listById(playing.listId)||activeList();const idx=currentIndex();if(idx>0)playItem(l.id,l.items[idx-1].id);else toast('זה הסרטון הראשון ברשימה');}
 function togglePlay(){
-  if(curIsImage()){ if(imageTimer||imageTick){ clearImageTimers(); setChip(true,'תמונה'); } else { startImageProgress(); } return; }
+  if(curIsImage()){ if(imageTimer||imageTick){ clearImageTimers(); setChip(true,T('chipImg')); } else { startImageProgress(); } return; }
   if(!video.src){const l=activeList();if(l.items.length)playItem(l.id,l.items[0].id);return;}
-  if(video.paused){video.play();if(outputOpen)CHAN.postMessage({type:'play',to:'output'});setPlay(true);setChip(true,'מוקרן כעת');}
-  else{video.pause();if(outputOpen)CHAN.postMessage({type:'pause',to:'output'});setPlay(false);setChip(false,'מושהה');}
+  if(video.paused){video.play();if(outputOpen)CHAN.postMessage({type:'play',to:'output'});setPlay(true);setChip(true,T('chipLive'));}
+  else{video.pause();if(outputOpen)CHAN.postMessage({type:'pause',to:'output'});setPlay(false);setChip(false,T('chipPause'));}
 }
-video.addEventListener('ended',()=>{if(!outputOpen){if(state.loop)return;if(state.autoAdvance)playNext();else{setPlay(false);setChip(false,'הסתיים');}}});
+video.addEventListener('ended',()=>{if(!outputOpen){if(state.loop)return;if(state.autoAdvance)playNext();else{setPlay(false);setChip(false,T('chipEnd'));}}});
 video.addEventListener('play',()=>{setPlay(true);syncMonBg();});
 video.addEventListener('pause',()=>{if(!video.ended)setPlay(false);syncMonBg();});
 video.addEventListener('timeupdate',()=>{updateScrub();syncMonBg();});
@@ -926,11 +942,11 @@ function listMenu(l,e){
 /* -------- queue -------- */
 function renderQueue(){
   const l=activeList(); qName.textContent=l.name; qIcon.textContent=l.icon||'🎞️';
-  qCount.textContent=l.items.length?`${l.items.length} סרטונים`:'';
+  qCount.textContent=l.items.length?`${l.items.length} ${T('clips')}`:'';
   const known=l.items.filter(i=>i.dur>0); const total=known.reduce((s,i)=>s+i.dur,0);
   if(known.length){ qTotal.classList.remove('hidden'); qTotal.textContent=`⏱ ${fmtLong(total)}${known.length<l.items.length?'+':''} סה״כ`; } else qTotal.classList.add('hidden');
   queueEl.innerHTML='';
-  if(!l.items.length){const e=document.createElement('div');e.className='empty-queue';e.innerHTML=`${ICO.film}<div><b>הרשימה ריקה</b></div><div class="sub">לחצי על <b>הוסף סרטונים</b>, או גררי קבצי וידאו לכל מקום בחלון</div>`;queueEl.appendChild(e);return;}
+  if(!l.items.length){const e=document.createElement('div');e.className='empty-queue';e.innerHTML=`${ICO.film}<div><b>${T('emptyTitle')}</b></div><div class="sub">${T('emptySub')}</div>`;queueEl.appendChild(e);return;}
   const nextId=nextUpId();
   l.items.forEach((it,i)=>{
     const isPlaying=playing.listId===l.id&&playing.itemId===it.id;
@@ -972,7 +988,7 @@ function nextUpId(){const l=listById(playing.listId);if(!l)return activeList().i
 function renderNowNext(){
   let nowN='—',nextN='—',nextDim=true;
   const pl=listById(playing.listId);
-  if(pl){const idx=pl.items.findIndex(i=>i.id===playing.itemId);if(idx>=0){nowN=pl.items[idx].name;const nx=pl.items[idx+1];nextN=nx?nx.name:'סוף הרשימה';nextDim=!nx;}}
+  if(pl){const idx=pl.items.findIndex(i=>i.id===playing.itemId);if(idx>=0){nowN=pl.items[idx].name;const nx=pl.items[idx+1];nextN=nx?nx.name:T('endlist');nextDim=!nx;}}
   else{const a=activeList();if(a.items.length){nextN=a.items[0].name;nextDim=false;}}
   const nn=el('nnNow'),nx=el('nnNext'); nn.textContent=nowN; nn.classList.toggle('dim',nowN==='—'); nx.textContent=nextN; nx.classList.toggle('dim',nextDim);
 }
@@ -1030,7 +1046,7 @@ document.addEventListener('drop',e=>{ if(!isFileDrag(e))return; e.preventDefault
 
 el('addList').addEventListener('click',()=>{const name=prompt('שם הרשימה החדשה:','רשימה חדשה');if(!name||!name.trim())return;const icon=prompt('אייקון (אמוג׳י):','🎞️')||'🎞️';const id='l'+uid();state.lists.push({id,name:name.trim(),icon:icon.trim()||'🎞️',items:[]});state.activeListId=id;save();renderAll();});
 
-function renderMode(){const b=el('btnMode');b.classList.toggle('on',state.autoAdvance);const txt=state.autoAdvance?'נגינה רציפה':'עצירה אחרי כל סרטון';el('modeTxt').textContent=txt;el('stMode').textContent=txt;}
+function renderMode(){const b=el('btnMode');b.classList.toggle('on',state.autoAdvance);const txt=state.autoAdvance?T('modeCont'):T('modeStop');el('modeTxt').textContent=txt;el('stMode').textContent=txt;}
 el('btnMode').addEventListener('click',()=>{state.autoAdvance=!state.autoAdvance;save();renderMode();toast(state.autoAdvance?'נגינה רציפה מופעלת':'עצירה אחרי כל סרטון');});
 
 el('btnPlay').addEventListener('click',togglePlay);
@@ -1054,7 +1070,7 @@ let toastT;function toast(msg){const t=el('toast');t.textContent=msg;t.classList
 function renderAll(){renderLists();renderQueue();renderMode();renderNowNext();}
 
 /* -------- בדיקת מערכת -------- */
-const APP_VERSION='1.3 (סאונד נשמע מהשליטה)';
+const APP_VERSION='1.3';
 async function runSystemCheck(){
   const rows=[];
   const add=(cls,txt)=>{ const ic={cok:'✓',cwarn:'⚠️',cbad:'✗',cnone:'○'}[cls]||'○'; rows.push(`<div class="cline"><span class="${cls}">${ic}</span><span>${escapeHtml(txt)}</span></div>`); };
@@ -1083,6 +1099,47 @@ el('verStamp').textContent='v'+APP_VERSION;
 function tick(){const d=new Date();el('clockT').textContent=d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 setInterval(tick,1000); tick();
 
+
+/* ===== Branding + i18n (OpenStage white-label) ===== */
+const I18N={
+he:{settings:'הגדרות',check:'בדיקה',relink:'חבר קבצים',fullscreen:'מסך מלא',black:'מסך שחור',standby:'לוגו המתנה',standbyAudio:'קול בהמתנה',banner:'באנר שם',fade:'מעבר רך',loop:'לולאה',add:'הוסף קבצים',newlist:'רשימה חדשה',playlists:'רשימות הקרנה',projctl:'בקרת מקרן',now:'עכשיו',next:'הבא בתור',pickclip:'בחרי סרטון מהרשימה כדי להקרין',preview:'תצוגה מקדימה · הקול במקרן',hints:'רווח נגן/עצור · ← הבא · → הקודם · B שחור · F מסך מלא',modeStop:'עצירה אחרי כל סרטון',modeCont:'נגינה רציפה',chipReady:'מוכן',chipLive:'מוקרן כעת',chipPause:'מושהה',chipEnd:'הסתיים',chipImg:'תמונה',projOff:'מקרן מנותק',projOn:'מקרן מחובר · הקול יוצא למקרן',projBtn:'תצוגת מקרן',projBtnOn:'מקרן מחובר',endlist:'סוף הרשימה',emptyTitle:'הרשימה ריקה',emptySub:'לחצי על "הוסף קבצים", או גררי קבצים לכל מקום בחלון',clips:'פריטים',standbyMedia:'מדיית המתנה',replaceFile:'החלף קובץ',sound:'סאונד',stopSound:'עצור סאונד',settingsTitle:'הגדרות ומיתוג',fldName:'שם המוצר',fldTag:'תת-כותרת',fldAccent:'צבעי מותג',fldLang:'שפה',fit:'מסגור',fit_blur:'רקע מטושטש',fit_contain:'שוליים שחורים',fit_cover:'מילוי (חיתוך)'},
+en:{settings:'Settings',check:'Check',relink:'Link files',fullscreen:'Fullscreen',black:'Black',standby:'Standby logo',standbyAudio:'Standby audio',banner:'Name banner',fade:'Fade',loop:'Loop',add:'Add media',newlist:'New list',playlists:'Playlists',projctl:'Projector control',now:'NOW',next:'NEXT',pickclip:'Pick a clip from the list to project',preview:'Preview · audio on projector',hints:'Space play/pause · → next · ← prev · B black · F fullscreen',modeStop:'Stop after each',modeCont:'Continuous play',chipReady:'Ready',chipLive:'On air',chipPause:'Paused',chipEnd:'Ended',chipImg:'Image',projOff:'Projector off',projOn:'Projector linked · audio on projector',projBtn:'Projector view',projBtnOn:'Projector linked',endlist:'End of list',emptyTitle:'This list is empty',emptySub:'Click "Add media", or drag files anywhere in the window',clips:'items',standbyMedia:'Standby media',replaceFile:'Replace file',sound:'Sound',stopSound:'Stop sound',settingsTitle:'Settings & branding',fldName:'Product name',fldTag:'Tagline',fldAccent:'Accent colors',fldLang:'Language',fit:'Fit',fit_blur:'Blurred fill',fit_contain:'Black bars',fit_cover:'Crop to fill'}
+};
+if(!state.branding)state.branding={};
+let LANG=state.branding.lang||'he';
+function T(k){var d=I18N[LANG]||I18N.he;return d[k]||I18N.he[k]||k;}
+function applyLang(){
+  document.documentElement.setAttribute('dir',LANG==='he'?'rtl':'ltr');
+  document.documentElement.setAttribute('lang',LANG);
+  document.querySelectorAll('[data-t]').forEach(function(elm){
+    var s=T(elm.getAttribute('data-t'));
+    if(elm.querySelector('svg')){Array.prototype.slice.call(elm.childNodes).forEach(function(n){if(n.nodeType===3)n.remove();});elm.appendChild(document.createTextNode(s));}
+    else elm.textContent=s;
+  });
+  renderAll(); updateProjectorUI(); updateStandbyUI(); updateSoundUI(); updateFitUI(); renderMode();
+}
+function applyBranding(){
+  var b=state.branding||{};
+  var name=b.name||'OpenStage', tag=(b.tagline!==undefined?b.tagline:'LIVE · STAGE CONTROL');
+  document.title=name;
+  var bn=document.querySelector('.brand-name'); if(bn)bn.textContent=name;
+  var bs=document.querySelector('.brand-sub'); if(bs)bs.textContent=tag;
+  var r=document.documentElement.style;
+  r.setProperty('--brand', b.accent||'#ff2d78');
+  r.setProperty('--brand-2', b.accent2||'#8b5cf6');
+}
+function saveBranding(){ state.branding={name:el('fldName').value.trim()||'OpenStage',tagline:el('fldTag').value,accent:el('fldAccent').value,accent2:el('fldAccent2').value,lang:el('fldLang').value}; save(); }
+el('btnSettings').addEventListener('click',function(){
+  var b=state.branding||{};
+  el('fldName').value=b.name||'OpenStage'; el('fldTag').value=(b.tagline!==undefined?b.tagline:'LIVE · STAGE CONTROL');
+  el('fldAccent').value=b.accent||'#ff2d78'; el('fldAccent2').value=b.accent2||'#8b5cf6'; el('fldLang').value=LANG;
+  el('setwrap').classList.add('show');
+});
+el('setClose').addEventListener('click',function(){el('setwrap').classList.remove('show');});
+el('setwrap').addEventListener('click',function(e){if(e.target===el('setwrap'))el('setwrap').classList.remove('show');});
+['input','change'].forEach(function(ev){ ['fldName','fldTag','fldAccent','fldAccent2'].forEach(function(id){ el(id).addEventListener(ev,function(){saveBranding();applyBranding();}); }); });
+el('fldLang').addEventListener('change',function(){LANG=el('fldLang').value;saveBranding();applyLang();});
+
 (async function init(){
   renderAll(); updateScrub();
   el('vol').value=Math.round(state.volume*100); video.volume=state.volume; video.loop=state.loop;
@@ -1093,6 +1150,7 @@ setInterval(tick,1000); tick();
   else{ for(const l of state.lists)for(const it of l.items){if(!liveHandles.has(it.key)){try{const h=await idbGet(it.key);if(h)liveHandles.set(it.key,h);}catch(_){}}}
         try{const sh=await idbGet('standby-media'); if(sh)standbyHandle=sh;}catch(_){}
         try{const soh=await idbGet('sound-media'); if(soh)soundHandle=soh;}catch(_){} }
+  applyBranding(); applyLang();
   scanDurations();
   CHAN.postMessage({type:'ping',to:'output'});
 })();
