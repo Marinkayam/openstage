@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>OpenStage</title>
+<style>
+  :root{
+    --bg:#080a0e;
+    --bg-grad:radial-gradient(1200px 700px at 80% -10%,rgba(124,92,255,.10),transparent 60%),
+              radial-gradient(1000px 600px at 10% 0%,rgba(255,45,120,.08),transparent 55%);
+    --s1:#0f131a;--s2:#151a23;--s3:#1b2130;
+    --line:#232a38;--line-2:#2e3648;--hair:rgba(255,255,255,.05);
+    --text:#f3f6fb;--dim:#9fadc4;--mute:#5f6b83;
+    --brand:#ff2d78;--brand-2:#8b5cf6;--live:#ff315f;--next:#38bdf8;--ok:#25d296;--warn:#ffb020;
+    --r-sm:9px;--r:12px;--r-lg:16px;--r-xl:20px;
+    --sh-1:0 1px 0 rgba(255,255,255,.04) inset,0 1px 2px rgba(0,0,0,.4);
+    --sh-2:0 12px 34px rgba(0,0,0,.5);
+    --tc:"SF Mono","JetBrains Mono","Roboto Mono",ui-monospace,monospace;
+    --font:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Heebo","Assistant","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased;letter-spacing:.1px;font-size:14px}
+  body::before{content:"";position:fixed;inset:0;background:var(--bg-grad);pointer-events:none;z-index:0}
+  button{font-family:inherit;color:inherit}
+  svg{display:block}
+  .app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh}
+
+  /* Header */
+  header.topbar{display:flex;align-items:center;gap:16px;padding:12px 20px;flex:0 0 auto;background:linear-gradient(180deg,rgba(21,26,35,.92),rgba(12,15,20,.92));border-bottom:1px solid var(--line);box-shadow:0 1px 0 var(--hair)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:38px;height:38px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 6px 18px rgba(255,45,120,.35),0 1px 0 rgba(255,255,255,.25) inset}
+  .logo svg{width:21px;height:21px}
+  .brand-name{font-weight:750;font-size:16px;letter-spacing:.2px;line-height:1.05}
+  .brand-sub{color:var(--mute);font-size:10.5px;font-weight:700;letter-spacing:1.4px;margin-top:3px;direction:ltr;text-align:right}
+  .topbar .spacer{flex:1}
+  .btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:var(--s2);border:1px solid var(--line);border-radius:var(--r);padding:9px 14px;font-size:13px;font-weight:650;color:var(--text);transition:.16s ease;box-shadow:var(--sh-1);white-space:nowrap}
+  .btn svg{width:17px;height:17px;opacity:.9}
+  .btn:hover{border-color:var(--line-2);background:var(--s3);transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.accent{background:linear-gradient(135deg,var(--brand),var(--brand-2));border:none;color:#fff;box-shadow:0 6px 18px rgba(255,45,120,.32)}
+  .btn.accent:hover{filter:brightness(1.07)}
+  .btn.on{border-color:var(--ok);color:#7ff0cb;background:rgba(37,210,150,.08)}
+  .btn.on .liveDot{background:var(--ok);box-shadow:0 0 0 3px rgba(37,210,150,.22)}
+  .liveDot{width:8px;height:8px;border-radius:50%;background:var(--mute);flex:0 0 auto;transition:.2s}
+
+  .main{flex:1;display:flex;min-height:0}
+
+  /* Sidebar */
+  .sidebar{width:248px;flex:0 0 248px;display:flex;flex-direction:column;background:linear-gradient(180deg,var(--s1),#0c1017);border-inline-start:1px solid var(--line)}
+  .side-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px}
+  .side-h .t{color:var(--mute);font-size:11px;font-weight:800;letter-spacing:1.2px}
+  .lists{flex:1;overflow:auto;padding:2px 10px}
+  .list-item{position:relative;display:flex;align-items:center;gap:11px;padding:11px 12px 11px 14px;border-radius:var(--r);cursor:pointer;margin-bottom:4px;border:1px solid transparent;transition:.14s}
+  .list-item::before{content:"";position:absolute;inset-inline-start:0;top:22%;bottom:22%;width:3px;border-radius:3px;background:transparent;transition:.14s}
+  .list-item:hover{background:var(--s2)}
+  .list-item.active{background:var(--s3);border-color:var(--line)}
+  .list-item.active::before{background:linear-gradient(180deg,var(--brand),var(--brand-2))}
+  .list-item.drop-target{border-color:var(--brand);background:rgba(255,45,120,.09)}
+  .li-ico{width:30px;height:30px;flex:0 0 auto;border-radius:9px;display:grid;place-items:center;font-size:15px;background:#0c1017;border:1px solid var(--line)}
+  .list-item.active .li-ico{background:#0a0d13;border-color:var(--line-2)}
+  .li-name{flex:1;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--dim)}
+  .list-item.active .li-name{color:#fff}
+  .li-count{min-width:26px;text-align:center;color:var(--dim);background:#0b0e14;border:1px solid var(--line);border-radius:20px;padding:2px 8px;font-size:11.5px;font-weight:700;font-family:var(--tc)}
+  .li-menu{opacity:0;color:var(--mute);background:none;border:none;cursor:pointer;padding:3px;border-radius:7px;transition:.12s}
+  .li-menu svg{width:16px;height:16px}
+  .list-item:hover .li-menu{opacity:1}
+  .li-menu:hover{color:#fff;background:#0b0e14}
+  .add-list{display:flex;align-items:center;justify-content:center;gap:7px;margin:8px 10px 12px;padding:11px;border:1px dashed var(--line-2);border-radius:var(--r);color:var(--dim);cursor:pointer;font-weight:650;font-size:13px;transition:.14s}
+  .add-list svg{width:16px;height:16px}
+  .add-list:hover{color:#fff;border-color:var(--brand);background:rgba(255,45,120,.06)}
+
+  .content{flex:1;display:flex;flex-direction:column;min-width:0}
+
+  /* Monitor */
+  .monitor-wrap{padding:16px 18px 0;flex:0 0 auto}
+  .monitor{position:relative;background:#000;border-radius:var(--r-lg);overflow:hidden;aspect-ratio:16/9;max-height:34vh;margin:0 auto;width:100%;border:1px solid var(--line-2);box-shadow:var(--sh-2),0 0 0 1px rgba(0,0,0,.5)}
+  .monitor video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+  .monitor #monBgCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:0;transition:opacity .3s;transform:scale(1.1);image-rendering:auto;filter:blur(10px);background:#000}
+  .monitor #video{z-index:1;background:transparent}
+  .monitor #monImg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;background:transparent;display:none}
+  .mon-empty{position:absolute;inset:0;display:grid;place-items:center;color:#39435a;text-align:center}
+  .mon-empty svg{width:52px;height:52px;margin:0 auto 12px;opacity:.7}
+  .mon-empty .t{font-size:13.5px;color:#4b566e;font-weight:600}
+  .mon-chip{position:absolute;top:12px;inset-inline-start:12px;display:flex;align-items:center;gap:8px;background:rgba(8,10,14,.62);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:6px 11px;font-size:11.5px;font-weight:750;letter-spacing:.4px}
+  .mon-chip .rec{width:9px;height:9px;border-radius:50%;background:var(--mute)}
+  .mon-chip.live .rec{background:var(--live);box-shadow:0 0 0 3px rgba(255,49,95,.25);animation:pulse 1.6s infinite}
+  .mon-chip.live{border-color:rgba(255,49,95,.4)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .prev-tag{position:absolute;top:12px;inset-inline-end:12px;background:rgba(56,189,248,.16);border:1px solid rgba(56,189,248,.5);color:#a8e5ff;border-radius:10px;padding:6px 11px;font-size:11px;font-weight:700;letter-spacing:.3px}
+  .mon-count{position:absolute;bottom:12px;inset-inline-end:14px;font-family:var(--tc);font-size:26px;font-weight:700;letter-spacing:1px;color:#dfe7f2;text-shadow:0 2px 10px rgba(0,0,0,.7);background:rgba(8,10,14,.5);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:3px 12px;transition:.2s;opacity:0}
+  .monitor.playing .mon-count{opacity:1}
+  .mon-count.warn{color:#ffd27a;border-color:rgba(255,176,32,.5)}
+  .mon-count.danger{color:#ff8aa4;border-color:rgba(255,49,95,.6);animation:pulse 1s infinite}
+  #monStandbyVid{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;opacity:0;transition:opacity .25s;z-index:2;pointer-events:none}
+  #monStandbyImg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;z-index:2;pointer-events:none;display:none}
+  #monBlack{position:absolute;inset:0;background:#000;opacity:0;transition:opacity .25s;z-index:2;pointer-events:none}
+  .mon-state{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:4;background:rgba(124,92,255,.92);color:#fff;border-radius:9px;padding:6px 12px;font-size:12px;font-weight:800;letter-spacing:.3px;box-shadow:0 4px 14px rgba(0,0,0,.45);white-space:nowrap}
+  .mon-state.blk{background:rgba(255,49,95,.92)}
+  .lower3{position:absolute;inset-inline:0;bottom:0;padding:26px 16px 13px;background:linear-gradient(0deg,rgba(0,0,0,.82),transparent);font-size:15px;font-weight:750;opacity:0;transform:translateY(6px);transition:.3s;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .monitor.playing .lower3{opacity:1;transform:none}
+
+  /* Scrub */
+  .scrub{display:flex;align-items:center;gap:12px;padding:12px 20px 2px;direction:ltr}
+  .tc{font-family:var(--tc);font-size:12.5px;color:var(--dim);font-weight:600;min-width:44px;letter-spacing:.5px}
+  .tc.rem{text-align:right;color:var(--mute)}
+  .track{position:relative;flex:1;height:8px;border-radius:20px;background:#141926;border:1px solid var(--line);cursor:pointer}
+  .track .fill{position:absolute;inset-inline-start:0;top:0;bottom:0;width:0;border-radius:20px;background:linear-gradient(90deg,var(--brand),var(--brand-2))}
+  .track .knob{position:absolute;top:50%;transform:translate(-50%,-50%);width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.5);left:0;opacity:0;transition:opacity .15s}
+  .track:hover .knob{opacity:1}
+
+  /* Now/Next */
+  .nownext{display:flex;gap:12px;padding:10px 20px 0}
+  .nn{flex:1;min-width:0;display:flex;align-items:center;gap:12px;background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;position:relative;overflow:hidden;box-shadow:var(--sh-1)}
+  .nn::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px}
+  .nn-now::before{background:var(--live)}
+  .nn-next::before{background:var(--next)}
+  .nn .tag{font-size:10px;font-weight:800;letter-spacing:1px;padding:4px 9px;border-radius:7px;flex:0 0 auto}
+  .nn-now .tag{background:rgba(255,49,95,.14);color:#ff789b}
+  .nn-next .tag{background:rgba(56,189,248,.14);color:#8fdcff}
+  .nn .nm{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+  .nn .nm.dim{color:var(--mute);font-weight:600}
+
+  /* Output control bar */
+  .outbar{display:flex;align-items:center;gap:8px;padding:12px 20px 2px;flex-wrap:wrap}
+  .ob-label{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--mute);margin-inline-end:2px}
+  .obtn{display:inline-flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:650;color:var(--dim);cursor:pointer;transition:.14s;box-shadow:var(--sh-1)}
+  .obtn svg{width:15px;height:15px}
+  .obtn:hover{border-color:var(--line-2);color:#fff;background:var(--s3)}
+  .obtn.on{color:#fff;border-color:transparent}
+  .obtn.on.blk{background:#000;border-color:var(--line-2);color:#fff}
+  .obtn.on.stby{background:rgba(124,92,255,.2);border-color:var(--brand-2);color:#cbbcff}
+  .obtn.on.bnr{background:rgba(56,189,248,.16);border-color:var(--next);color:#a8e5ff}
+  .obtn.on.fade{background:rgba(37,210,150,.14);border-color:var(--ok);color:#8ff0cf}
+  .obtn.on.loop{background:rgba(255,176,32,.14);border-color:var(--warn);color:#ffd27a}
+  .obtn.on.setstby{background:rgba(124,92,255,.16);border-color:var(--brand-2);color:#cbbcff}
+  .obtn.on.sbaud{background:rgba(37,210,150,.14);border-color:var(--ok);color:#8ff0cf}
+  .obtn.on.snd{background:rgba(255,45,120,.16);border-color:var(--brand);color:#ff8ab0}
+  .obtn.on.sndfile{background:rgba(124,92,255,.16);border-color:var(--brand-2);color:#cbbcff}
+  .vol{display:inline-flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:7px 12px;box-shadow:var(--sh-1)}
+  .vol svg{width:16px;height:16px;color:var(--dim)}
+  .vol input[type=range]{-webkit-appearance:none;appearance:none;width:92px;height:5px;border-radius:20px;background:linear-gradient(90deg,var(--brand),var(--brand-2)) no-repeat;background-size:70% 100%;background-color:#232b3b;cursor:pointer}
+  .vol input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+
+  /* Transport */
+  .transport{display:flex;align-items:center;gap:12px;padding:12px 20px}
+  .cbtn{width:46px;height:46px;border-radius:13px;cursor:pointer;display:grid;place-items:center;background:var(--s2);border:1px solid var(--line);color:var(--text);transition:.15s;box-shadow:var(--sh-1)}
+  .cbtn svg{width:20px;height:20px}
+  .cbtn:hover{background:var(--s3);border-color:var(--line-2);transform:translateY(-1px)}
+  .cbtn.play{width:60px;height:52px;border:none;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 8px 22px rgba(255,45,120,.34)}
+  .cbtn.play svg{width:24px;height:24px}
+  .cbtn.play:hover{filter:brightness(1.08)}
+  .transport .spacer{flex:1}
+  .toggle{display:inline-flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--line);border-radius:13px;padding:9px 14px;cursor:pointer;font-size:13px;font-weight:700;transition:.15s;box-shadow:var(--sh-1)}
+  .toggle:hover{border-color:var(--line-2)}
+  .toggle .sw{width:36px;height:20px;border-radius:20px;background:#232b3b;position:relative;transition:.18s;flex:0 0 auto}
+  .toggle.on .sw{background:var(--ok)}
+  .toggle .sw::after{content:"";position:absolute;top:2px;inset-inline-end:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.18s;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .toggle.on .sw::after{inset-inline-end:auto;inset-inline-start:2px}
+  .toggle .txt{white-space:nowrap;color:var(--dim)}
+  .toggle.on .txt{color:#8ff0cf}
+
+  /* Queue */
+  .queue-wrap{flex:1;display:flex;flex-direction:column;min-height:0;border-top:1px solid var(--line);background:linear-gradient(180deg,#0a0d13,var(--bg))}
+  .queue-head{display:flex;align-items:center;gap:12px;padding:14px 20px 10px;flex:0 0 auto}
+  .qtitle{font-size:16px;font-weight:800;display:flex;align-items:center;gap:10px}
+  .qtitle .ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:15px;background:var(--s2);border:1px solid var(--line)}
+  .qcount{color:var(--mute);font-size:12px;font-weight:700;font-family:var(--tc)}
+  .qtotal{color:var(--dim);font-size:12px;font-weight:700;font-family:var(--tc);background:var(--s2);border:1px solid var(--line);border-radius:8px;padding:3px 10px}
+  .queue-head .spacer{flex:1}
+  .queue{flex:1;overflow:auto;padding:2px 14px 18px}
+  .row{display:flex;align-items:center;gap:13px;background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:9px 12px;margin-bottom:8px;transition:.12s;box-shadow:var(--sh-1)}
+  .row:hover{border-color:var(--line-2)}
+  .row.playing{border-color:var(--live);background:rgba(255,49,95,.06);box-shadow:0 0 0 1px rgba(255,49,95,.4) inset}
+  .row.next{border-color:rgba(56,189,248,.45)}
+  .grip{cursor:grab;color:#4a556d;flex:0 0 auto;display:grid;place-items:center}
+  .grip svg{width:18px;height:18px}
+  .grip:active{cursor:grabbing}
+  .idx{width:24px;text-align:center;color:var(--mute);font-weight:700;font-size:12.5px;flex:0 0 auto;font-family:var(--tc)}
+  .row.playing .idx{color:var(--live)}
+  .thumb{width:78px;height:46px;border-radius:8px;background:#05070b;flex:0 0 auto;display:grid;place-items:center;color:#39435a;border:1px solid var(--line);overflow:hidden;position:relative}
+  .thumb svg{width:22px;height:22px}
+  .thumb .dur{position:absolute;bottom:2px;inset-inline-end:3px;font-family:var(--tc);font-size:9.5px;font-weight:700;color:#dfe7f2;background:rgba(0,0,0,.72);border-radius:4px;padding:1px 4px}
+  .rmeta{flex:1;min-width:0}
+  .rname{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rsub{color:var(--mute);font-size:11.5px;margin-top:3px;font-family:var(--tc);letter-spacing:.3px}
+  .rsub.badge{font-family:var(--font);font-weight:700;letter-spacing:.2px}
+  .rsub.now{color:#ff789b}
+  .rsub.next{color:#8fdcff}
+  .rowbtns{display:flex;gap:6px;flex:0 0 auto;opacity:1;transition:.12s}
+  .rbtn{width:34px;height:34px;border-radius:9px;cursor:pointer;display:grid;place-items:center;background:var(--s2);border:1px solid var(--line);color:var(--dim);transition:.12s}
+  .rbtn svg{width:16px;height:16px}
+  .rbtn:hover{color:#fff;border-color:var(--line-2);background:var(--s3)}
+  .rbtn.play:hover{color:var(--ok);border-color:rgba(37,210,150,.5)}
+  .rbtn.del:hover{color:var(--live);border-color:rgba(255,49,95,.5)}
+  .empty-queue{margin:14px 4px;padding:40px 20px;border:2px dashed var(--line-2);border-radius:var(--r-lg);text-align:center;color:var(--dim)}
+  .empty-queue svg{width:46px;height:46px;margin:0 auto 12px;opacity:.6}
+  .empty-queue b{color:var(--text)}
+  .empty-queue .sub{margin-top:6px;font-size:13px;color:var(--mute)}
+  .queue.dragover{outline:2px dashed var(--brand-2);outline-offset:-6px;border-radius:var(--r-lg)}
+  .addbtn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border:none;border-radius:var(--r);padding:10px 15px;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 6px 18px rgba(255,45,120,.3)}
+  .addbtn svg{width:16px;height:16px}
+  .addbtn:hover{filter:brightness(1.08)}
+
+  /* Status bar */
+  .statusbar{display:flex;align-items:center;gap:14px;padding:8px 20px;flex:0 0 auto;background:linear-gradient(180deg,#0c0f15,#080a0e);border-top:1px solid var(--line);font-size:11.5px;color:var(--mute);font-weight:600}
+  .statusbar .clock{font-family:var(--tc);color:var(--dim);font-weight:700;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+  .statusbar .clock svg{width:14px;height:14px;opacity:.7}
+  .statusbar .st{display:flex;align-items:center;gap:7px}
+  .statusbar .sdot{width:8px;height:8px;border-radius:50%;background:var(--mute)}
+  .statusbar .st.live .sdot{background:var(--ok);box-shadow:0 0 0 3px rgba(37,210,150,.2)}
+  .statusbar .st.live{color:#8ff0cf}
+  .statusbar .sep{width:1px;height:14px;background:var(--line)}
+  .statusbar .spacer{flex:1}
+  .statusbar .hints{color:var(--mute);letter-spacing:.2px}
+  .statusbar .hints b{color:var(--dim);font-family:var(--tc)}
+
+  .toast{position:fixed;bottom:44px;left:50%;transform:translateX(-50%) translateY(20px);background:#1c2330;border:1px solid var(--line-2);color:var(--text);padding:11px 20px;border-radius:13px;font-size:13.5px;font-weight:650;box-shadow:var(--sh-2);opacity:0;pointer-events:none;transition:.26s;z-index:60}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .checkwrap{position:fixed;inset:0;z-index:90;display:none;place-items:center;background:rgba(8,10,14,.75);backdrop-filter:blur(4px)}
+  .checkwrap.show{display:grid}
+  .check-card{width:min(480px,92vw);background:var(--s1);border:1px solid var(--line-2);border-radius:var(--r-lg);box-shadow:var(--sh-2);overflow:hidden}
+  .check-head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--line);font-weight:800;font-size:16px}
+  .check-head button{background:var(--s3);border:1px solid var(--line);color:var(--dim);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px}
+  .check-body{padding:12px 18px 18px;font-size:14px;line-height:1.9}
+  .check-body .cline{display:flex;gap:9px;align-items:baseline;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+  .check-body .cok{color:var(--ok)}.check-body .cwarn{color:var(--warn)}.check-body .cbad{color:var(--live)}
+  .check-body .csum{margin-top:12px;font-weight:800;font-size:15px}
+  .dropzone{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(8,10,14,.84);backdrop-filter:blur(5px)}
+  .dropzone.show{display:grid}
+  .dz-card{border:3px dashed var(--brand);border-radius:26px;padding:52px 72px;text-align:center;background:rgba(21,26,35,.72);box-shadow:var(--sh-2);pointer-events:none}
+  .dz-card svg{width:62px;height:62px;margin:0 auto 18px;color:var(--brand)}
+  .dz-card .t{font-size:23px;font-weight:800}
+  .dz-card .s{color:var(--dim);font-size:14.5px;margin-top:9px}
+  .dz-card .s b{color:#fff}
+
+  ::-webkit-scrollbar{width:11px;height:11px}
+  ::-webkit-scrollbar-thumb{background:#232b3b;border-radius:20px;border:3px solid transparent;background-clip:padding-box}
+  ::-webkit-scrollbar-thumb:hover{background:#30394b;background-clip:padding-box}
+  ::-webkit-scrollbar-track{background:transparent}
+  .hidden{display:none!important}
+
+  /* Projector output */
+  #pj{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:1}
+  #pj video{width:100vw;height:100vh;object-fit:contain;background:#000;transition:opacity .28s}
+  #pj #pvbgcanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:0;transition:opacity .35s;transform:scale(1.1);image-rendering:auto;filter:blur(18px);background:#000}
+  #pj #pv{position:absolute;inset:0;z-index:1;background:transparent}
+  #pj #pimg{position:absolute;inset:0;width:100vw;height:100vh;object-fit:contain;z-index:1;background:transparent;display:none}
+  #pj #pjstandbyImg{position:absolute;inset:0;width:100vw;height:100vh;object-fit:contain;z-index:2;background:transparent;display:none}
+  #pj #pjstandbyVid{position:absolute;inset:0;opacity:0;z-index:2;background:transparent;pointer-events:none}
+  #pjblack{position:absolute;inset:0;background:#000;opacity:0;transition:opacity .3s;pointer-events:none;z-index:5}
+  #pjhint{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(900px 600px at 50% 35%,rgba(124,92,255,.14),transparent 60%),linear-gradient(180deg,#0d1018,#05070b);color:var(--text);text-align:center;z-index:6;transition:opacity .3s}
+  .ph-card{max-width:480px;padding:34px}
+  .ph-logo{width:64px;height:64px;border-radius:18px;margin:0 auto 20px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 10px 30px rgba(255,45,120,.4)}
+  .ph-logo svg{width:34px;height:34px}
+  .ph-card h2{margin:0 0 10px;font-size:25px;font-weight:800}
+  .ph-card p{color:var(--dim);font-size:15px;line-height:1.75;margin:0 0 22px}
+  #pjfull{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(255,45,120,.4)}
+  #pjfull svg{width:20px;height:20px}
+  #pjfull:hover{filter:brightness(1.08)}
+  .ph-small{font-size:12.5px!important;color:var(--mute)!important;margin-top:18px!important}
+  .ph-small b{color:var(--dim);font-family:var(--tc);padding:1px 5px;border:1px solid var(--line-2);border-radius:5px}
+  #pjunlock{position:absolute;inset:0;display:none;place-items:center;text-align:center;cursor:pointer;z-index:8;background:radial-gradient(900px 600px at 50% 40%,rgba(255,45,120,.16),transparent 60%),rgba(5,7,11,.92)}
+  #pjunlock.show{display:grid}
+  #pjunlock .pu-play{width:96px;height:96px;border-radius:50%;margin:0 auto 22px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 12px 40px rgba(255,45,120,.5)}
+  #pjunlock .pu-play svg{width:44px;height:44px}
+  #pjunlock h2{margin:0 0 8px;font-size:24px;font-weight:800}
+  #pjunlock p{color:var(--dim);font-size:15px;margin:0}
+  #pjname{position:absolute;bottom:0;inset-inline:0;padding:34px 44px;background:linear-gradient(0deg,rgba(0,0,0,.8),transparent);z-index:4;opacity:0;transition:.4s;pointer-events:none}
+  #pj.showname #pjname{opacity:1}
+  #pjname .bn-strip{display:inline-flex;align-items:center;gap:14px}
+  #pjname .bn-bar{width:6px;height:38px;border-radius:6px;background:linear-gradient(180deg,var(--brand),var(--brand-2))}
+  #pjname .bn-txt{color:#fff;font-size:30px;font-weight:800;letter-spacing:.3px}
+  #pj:fullscreen #pjname .bn-txt{font-size:40px}
+  #pj:fullscreen #pjname .bn-bar{height:50px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M5 15V9M9.5 18V6M14.5 18V6M19 15V9"/></svg></div>
+      <div><div class="brand-name">OpenStage</div><div class="brand-sub">LIVE · STAGE CONTROL</div></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="btnCheck" title="בדיקת מערכת — לוודא שהכל עובד ונשמר"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>בדיקה</button>
+    <button class="btn" id="btnRelink" title="לחברי מחדש קבצים אחרי פתיחה מחדש"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6M10.5 6.5l1-1a4 4 0 0 1 6 6l-1 1M13.5 17.5l-1 1a4 4 0 0 1-6-6l1-1"/></svg>חבר קבצים</button>
+    <button class="btn" id="btnProjector" title="פתחי חלון נפרד להקרנה על המקרן"><span class="liveDot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg><span class="lbl">תצוגת מקרן</span></button>
+    <button class="btn accent" id="btnFull" title="מסך מלא בחלון הזה (למסך יחיד)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>מסך מלא</button>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <div class="side-h"><span class="t">רשימות הקרנה</span></div>
+      <div class="lists" id="lists"></div>
+      <div class="add-list" id="addList"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>רשימה חדשה</div>
+    </aside>
+
+    <div class="content">
+      <div class="monitor-wrap">
+        <div class="monitor" id="monitor">
+          <canvas id="monBgCanvas" width="64" height="36"></canvas>
+          <img id="monImg" alt="">
+          <video id="video" playsinline></video>
+          <div class="mon-empty" id="monEmpty"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 15h18M8 4v16M16 4v16"/></svg><div class="t">בחרי סרטון מהרשימה כדי להקרין</div></div></div>
+          <div class="mon-chip" id="monChip"><span class="rec"></span><span id="monChipTxt">מוכן</span></div>
+          <div class="prev-tag hidden" id="previewTag">תצוגה מקדימה · הקול במקרן</div>
+          <video id="monStandbyVid" muted loop playsinline></video>
+          <img id="monStandbyImg" alt="">
+          <div id="monBlack"></div>
+          <div class="mon-state hidden" id="monStateChip"></div>
+          <div class="mon-count" id="monCount">0:00</div>
+          <div class="lower3" id="lower3"></div>
+        </div>
+      </div>
+
+      <div class="scrub">
+        <span class="tc" id="tcCur">0:00</span>
+        <div class="track" id="track"><div class="fill" id="trackFill"></div><div class="knob" id="trackKnob"></div></div>
+        <span class="tc rem" id="tcRem">0:00</span>
+      </div>
+
+      <div class="nownext">
+        <div class="nn nn-now"><span class="tag">עכשיו</span><span class="nm dim" id="nnNow">—</span></div>
+        <div class="nn nn-next"><span class="tag">הבא בתור</span><span class="nm dim" id="nnNext">—</span></div>
+      </div>
+
+      <div class="outbar">
+        <span class="ob-label">בקרת מקרן</span>
+        <button class="obtn blk" id="btnBlack" title="מסך שחור מיידי (B)"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>מסך שחור</button>
+        <button class="obtn stby" id="btnStandby" title="מסך לוגו / המתנה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>לוגו המתנה</button>
+        <button class="obtn setstby" id="btnSetStandby" title="בחרי סרטון שיוצג במסך ההמתנה (בלולאה)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14V4M8.5 7.5 12 4l3.5 3.5"/><rect x="4" y="14" width="16" height="6" rx="1.6"/></svg><span id="setStandbyLbl">סרטון המתנה</span></button>
+        <button class="obtn sbaud" id="btnStandbyAudio" title="השמעת הקול של סרטון ההמתנה על המקרן"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M16 9a3 3 0 0 1 0 6M19 6a7 7 0 0 1 0 12"/></svg>קול בהמתנה</button>
+        <button class="obtn" id="btnFit" title="איך הווידאו ממלא את מסך המקרן (רקע מטושטש / שוליים / מילוי)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 5v14M16 5v14"/></svg><span id="fitLbl">מסגור</span></button>
+        <button class="obtn bnr" id="btnBanner" title="הצגת שם הקבוצה על המקרן"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v9H8l-4 4V5Z"/></svg>באנר שם</button>
+        <button class="obtn fade" id="btnFade" title="מעבר רך בין סרטונים"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" stroke="none"/></svg>מעבר רך</button>
+        <button class="obtn loop" id="btnLoop" title="לולאה על הסרטון הנוכחי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>לולאה</button>
+        <button class="obtn snd" id="btnSound" title="נגן/עצור את סאונד (בלולאה)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg><span id="soundLbl">סאונד</span></button>
+        <button class="obtn sndfile" id="btnSoundFile" title="בחרי קובץ אודיו לסאונד"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14V4M8.5 7.5 12 4l3.5 3.5"/><rect x="4" y="14" width="16" height="6" rx="1.6"/></svg><span id="soundFileLbl">קובץ סאונד</span></button>
+        <div class="vol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M16 9a3 3 0 0 1 0 6M19 6a7 7 0 0 1 0 12"/></svg><input type="range" id="vol" min="0" max="100" value="100"></div>
+      </div>
+
+      <div class="transport">
+        <button class="cbtn" id="btnPrev" title="הקודם"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6a1 1 0 0 1 2 0v4.2l7.4-4.94A1 1 0 0 1 17 6.4v11.2a1 1 0 0 1-1.6.84L8 13.8V18a1 1 0 0 1-2 0V6Z"/></svg></button>
+        <button class="cbtn play" id="btnPlay" title="נגן / עצור"><svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l11-6.86a1 1 0 0 0 0-1.7l-11-6.86A1 1 0 0 0 8 5.14Z"/></svg></button>
+        <button class="cbtn" id="btnNext" title="הבא"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6a1 1 0 0 0-2 0v4.2L8.6 5.26A1 1 0 0 0 7 6.4v11.2a1 1 0 0 0 1.6.84L16 13.8V18a1 1 0 0 0 2 0V6Z"/></svg></button>
+        <div class="spacer"></div>
+        <div class="toggle" id="btnMode" title="מעבר בין עצירה אחרי כל סרטון לנגינה רציפה"><span class="sw"></span><span class="txt" id="modeTxt">עצירה אחרי כל סרטון</span></div>
+      </div>
+
+      <div class="queue-wrap">
+        <div class="queue-head">
+          <div class="qtitle"><span class="ic" id="qIcon">⭐</span><span id="qName">רשימה 1</span><span class="qcount" id="qCount"></span></div>
+          <div class="spacer"></div>
+          <span class="qtotal hidden" id="qTotal"></span>
+          <button class="addbtn" id="btnAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>הוסף סרטונים</button>
+        </div>
+        <div class="queue" id="queue"></div>
+      </div>
+
+      <footer class="statusbar">
+        <div class="clock" id="clock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg><span id="clockT">--:--</span></div>
+        <div class="sep"></div>
+        <div class="st" id="stProjector"><span class="sdot"></span><span>מקרן מנותק</span></div>
+        <div class="sep"></div>
+        <div id="stMode">עצירה אחרי כל סרטון</div>
+        <div class="spacer"></div>
+        <div class="hints"><b>רווח</b> נגן/עצור &nbsp;·&nbsp; <b>←</b> הבא &nbsp;·&nbsp; <b>→</b> הקודם &nbsp;·&nbsp; <b>B</b> שחור &nbsp;·&nbsp; <b>F</b> מסך מלא</div>
+        <div class="sep"></div>
+        <div id="verStamp" style="font-family:var(--tc);color:var(--mute)"></div>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="filePicker" accept="video/*,image/*" multiple class="hidden">
+<input type="file" id="standbyPicker" accept="video/*,image/*" class="hidden">
+<input type="file" id="soundPicker" accept="audio/*" class="hidden">
+<audio id="ctlsound" loop></audio>
+<div class="checkwrap" id="checkwrap"><div class="check-card">
+  <div class="check-head"><span>🩺 בדיקת מערכת</span><button id="checkClose">✕</button></div>
+  <div class="check-body" id="checkBody"></div>
+</div></div>
+<video id="probe" class="hidden" preload="metadata" muted></video>
+<div class="dropzone" id="dropzone"><div class="dz-card">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+  <div class="t">שחררי כאן להוספת סרטונים</div>
+  <div class="s">הסרטונים יתווספו לרשימה "<b id="dzList"></b>"</div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const SUPPORTS_FS='showOpenFilePicker' in window;
+const CHAN=new BroadcastChannel('openstage-projector');
+const OUTPUT=new URLSearchParams(location.search).get('view')==='output';
+
+/* ===== OpenStage — white-label configuration ===== */
+const CONFIG = {
+  // Optional built-in audio shipped with the app (place a file next to index.html
+  // and set its filename here, e.g. 'sound.mp3'). Leave '' to let users pick their own.
+  builtInSound: ''
+};
+
+const ICO={
+  play:`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l11-6.86a1 1 0 0 0 0-1.7l-11-6.86A1 1 0 0 0 8 5.14Z"/></svg>`,
+  pause:`<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.3"/><rect x="14" y="5" width="4" height="14" rx="1.3"/></svg>`,
+  up:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>`,
+  down:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`,
+  del:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/></svg>`,
+  edit:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18 10a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="M13.5 6.5l4 4"/></svg>`,
+  grip:`<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>`,
+  film:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 15h18M8 4v16M16 4v16"/></svg>`,
+  img:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg>`,
+  copy:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg>`,
+  menu:`<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>`,
+};
+
+if(OUTPUT){ initOutput(); } else { initControl(); }
+
+/* ================= Projector output ================= */
+function initOutput(){
+  document.title='OpenStage';
+  document.querySelector('.app').remove();
+  const wrap=document.createElement('div'); wrap.id='pj';
+  wrap.innerHTML=`
+    <canvas id="pvbgcanvas" width="64" height="36"></canvas>
+    <img id="pimg" alt="">
+    <video id="pv" playsinline></video>
+    <img id="pjstandbyImg" alt="">
+    <video id="pjstandbyVid" playsinline loop muted></video>
+    <audio id="pjsound" loop></audio>
+    <div id="pjblack"></div>
+    <div id="pjname"><span class="bn-strip"><span class="bn-bar"></span><span class="bn-txt"></span></span></div>
+    <div id="pjhint">
+      <div class="ph-card">
+        <div class="ph-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M5 15V9M9.5 18V6M14.5 18V6M19 15V9"/></svg></div>
+        <h2>OpenStage</h2>
+        <p>גררי את החלון הזה אל מסך המקרן,<br>ואז לחצי על הכפתור למטה למסך מלא.</p>
+        <button id="pjfull"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg> מסך מלא</button>
+        <p class="ph-small">אפשר גם ללחוץ <b>F</b> למסך מלא · <b>ESC</b> ליציאה</p>
+      </div>
+    </div>
+    <div id="pjunlock">
+      <div>
+        <div class="pu-play"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l11-6.86a1 1 0 0 0 0-1.7l-11-6.86A1 1 0 0 0 8 5.14Z"/></svg></div>
+        <h2>לחצי כאן להפעלת המקרן</h2>
+        <p>לחיצה אחת נדרשת פעם אחת כדי לאפשר קול והפעלה אוטומטית</p>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+  const pv=wrap.querySelector('#pv'),pimg=wrap.querySelector('#pimg'),bgCanvas=wrap.querySelector('#pvbgcanvas'),standbyVid=wrap.querySelector('#pjstandbyVid'),standbyImg=wrap.querySelector('#pjstandbyImg'),pjsound=wrap.querySelector('#pjsound'),blackEl=wrap.querySelector('#pjblack'),hint=wrap.querySelector('#pjhint'),unlock=wrap.querySelector('#pjunlock');
+  const bnTxt=wrap.querySelector('.bn-txt');
+  const bgctx=bgCanvas.getContext('2d'); const BGW=64,BGH=36;
+  let cur=null, curIsImage=false, standbyCur=null, hasStandbyVideo=false, standbyIsImage=false, standbyAudioOn=false, soundCur=null, soundWanted=false, curVol=1, fitMode='blur', screen='welcome', bannerText='', bannerPersist=false, fadeOn=false, unlocked=false;
+  function applyFit(){
+    const fit = fitMode==='cover' ? 'cover' : 'contain';
+    pv.style.objectFit=fit; pimg.style.objectFit=fit; standbyVid.style.objectFit=fit; standbyImg.style.objectFit=fit;
+    // "נוצה" בקצוות רק לסרטון/תמונה הרגילים (לא ללוגו ההמתנה — שם זה יוצר שוליים מוזרים)
+    const mask = fitMode==='blur' ? 'linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%)' : '';
+    pv.style.webkitMaskImage=mask; pv.style.maskImage=mask;
+    pimg.style.webkitMaskImage=mask; pimg.style.maskImage=mask;
+    standbyVid.style.webkitMaskImage=''; standbyVid.style.maskImage='';
+    standbyImg.style.webkitMaskImage=''; standbyImg.style.maskImage='';
+    syncBg();
+  }
+  /* רקע מטושטש ללא CSS filter: מציירים את הפריים לקנבס זעיר ומגדילים אותו (ריכוך טבעי) */
+  let bgTimer=null;
+  function drawBg(){
+    const s = curIsImage ? pimg : pv;
+    const ok = curIsImage ? (pimg.complete && pimg.naturalWidth) : (pv.readyState>=2 && pv.videoWidth);
+    if(!ok){ return; }
+    try{ bgctx.drawImage(s,0,0,BGW,BGH); bgctx.fillStyle='rgba(0,0,0,0.25)'; bgctx.fillRect(0,0,BGW,BGH); }catch(_){}
+  }
+  function syncBg(){
+    // רקע מטושטש רק לסרטון הרגיל — לוגו ההמתנה מוצג נקי
+    const on = fitMode==='blur' && screen==='live';
+    bgCanvas.style.opacity = on?'1':'0';
+    if(on){ if(!bgTimer){ drawBg(); bgTimer=setInterval(drawBg,66); } }
+    else if(bgTimer){ clearInterval(bgTimer); bgTimer=null; }
+  }
+  function tryPlay(elm){ elm=elm||pv; const p=elm.play(); if(p&&p.catch) p.catch(err=>{ if(err&&err.name==='NotAllowedError'){ unlock.classList.add('show'); } }); }
+  unlock.addEventListener('click',()=>{ unlocked=true; unlock.classList.remove('show'); if(screen==='standby'&&hasStandbyVideo&&!standbyIsImage)tryPlay(standbyVid); else if(!curIsImage)tryPlay(pv); if(soundWanted)pjsound.play().catch(()=>{}); });
+
+  function applyScreen(){
+    blackEl.style.opacity = screen==='black'?'1':'0';
+    const useStandby = screen==='standby' && hasStandbyVideo;
+    standbyImg.style.display = (useStandby && standbyIsImage)?'block':'none';
+    standbyVid.style.opacity = (useStandby && !standbyIsImage)?'1':'0';
+    if(useStandby && !standbyIsImage){ tryPlay(standbyVid); } else { standbyVid.pause(); }
+    // מציגים את כרטיס הלוגו הקבוע רק כשאין מדיית המתנה
+    hint.style.opacity = (screen==='welcome' || (screen==='standby' && !hasStandbyVideo)) ? '1':'0';
+    hint.style.pointerEvents='none';
+    pv.muted = screen!=='live';
+    wrap.classList.toggle('showname', screen==='live' && !!bannerText && bannerPersist);
+    syncBg();
+  }
+  function showBannerFlash(){
+    // אין הבזק אוטומטי בכל סרטון — הבאנר מוצג על המקרן רק אם "באנר שם" דלוק (קבוע)
+    wrap.classList.toggle('showname', screen==='live' && !!bannerText && bannerPersist);
+  }
+  function setSrc(file,name,play,kind){
+    if(cur) URL.revokeObjectURL(cur);
+    cur=URL.createObjectURL(file);
+    curIsImage = kind==='image';
+    bannerText=name||''; bnTxt.textContent=bannerText;
+    const front = curIsImage?pimg:pv;
+    const assign=()=>{
+      if(curIsImage){ pimg.src=cur; pimg.style.display='block'; pv.style.display='none'; try{pv.pause();}catch(_){} }
+      else { pv.style.display=''; pimg.style.display='none'; pv.src=cur; }
+      if(screen==='welcome')screen='live';
+      applyFit(); applyScreen(); if(!curIsImage && play)tryPlay(); showBannerFlash(); syncBg();
+    };
+    if(fadeOn && screen==='live'){ front.style.opacity='0'; setTimeout(()=>{ assign(); requestAnimationFrame(()=>front.style.opacity='1'); },150); }
+    else { pv.style.opacity='1'; pimg.style.opacity='1'; assign(); }
+  }
+  function goFull(){ unlocked=true; unlock.classList.remove('show'); (wrap.requestFullscreen||wrap.webkitRequestFullscreen).call(wrap).catch(()=>{}); }
+  wrap.querySelector('#pjfull').addEventListener('click',goFull);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='f'||e.key==='F'){ document.fullscreenElement?document.exitFullscreen():goFull(); }
+    else if(e.code==='Space'){ e.preventDefault(); pv.paused?tryPlay():pv.pause(); }
+  });
+  CHAN.onmessage=e=>{
+    const m=e.data; if(m.to&&m.to!=='output')return;
+    if(m.type==='load') setSrc(m.file,m.name,m.play,m.kind);
+    else if(m.type==='play'){ if(screen!=='live'){screen='live';applyScreen();} if(!curIsImage)tryPlay(); syncBg(); }
+    else if(m.type==='pause'){ if(!curIsImage)pv.pause(); }
+    else if(m.type==='seek'){ if(!curIsImage){try{pv.currentTime=m.t;}catch(_){}} }
+    else if(m.type==='fit'){ fitMode=m.mode; applyFit(); }
+    else if(m.type==='black'){ screen=m.on?'black':'live'; applyScreen(); }
+    else if(m.type==='standby'){ screen=m.on?'standby':'live'; applyScreen(); }
+    else if(m.type==='banner'){ bannerPersist=m.persist; bnTxt.textContent=bannerText=m.text||bannerText; if(m.flash)showBannerFlash(); applyScreen(); }
+    else if(m.type==='standbyMedia'){
+      if(standbyCur)URL.revokeObjectURL(standbyCur); standbyCur=URL.createObjectURL(m.file);
+      standbyIsImage = m.kind==='image';
+      if(standbyIsImage){ standbyImg.src=standbyCur; try{standbyVid.pause();standbyVid.removeAttribute('src');}catch(_){} }
+      else { standbyVid.src=standbyCur; standbyVid.loop=true; standbyVid.muted=!standbyAudioOn; standbyVid.volume=curVol; }
+      hasStandbyVideo=true; if(screen==='standby')applyScreen();
+    }
+    else if(m.type==='standbyAudio'){ standbyAudioOn=m.on; standbyVid.muted=!m.on; standbyVid.volume=curVol; if(screen==='standby'&&hasStandbyVideo) tryPlay(standbyVid); }
+    else if(m.type==='soundMedia'){ if(soundCur)URL.revokeObjectURL(soundCur); soundCur=URL.createObjectURL(m.file); pjsound.src=soundCur; pjsound.loop=true; pjsound.volume=curVol; }
+    else if(m.type==='soundPlay'){ soundWanted=m.on; if(m.on){ pjsound.volume=curVol; const p=pjsound.play(); if(p&&p.catch)p.catch(err=>{ if(err&&err.name==='NotAllowedError')unlock.classList.add('show'); }); } else pjsound.pause(); }
+    else if(m.type==='volume'){ curVol=m.v; pv.volume=m.v; standbyVid.volume=m.v; pjsound.volume=m.v; }
+    else if(m.type==='fade'){ fadeOn=m.on; }
+    else if(m.type==='loop'){ pv.loop=m.on; }
+    else if(m.type==='ping') CHAN.postMessage({type:'hello',to:'control'});
+  };
+  pv.addEventListener('ended',()=>CHAN.postMessage({type:'ended',to:'control'}));
+  CHAN.postMessage({type:'hello',to:'control'});
+  window.addEventListener('beforeunload',()=>CHAN.postMessage({type:'bye',to:'control'}));
+}
+
+/* ================= Control ================= */
+function initControl(){
+const IDB_NAME='projector-db',IDB_STORE='handles';
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(IDB_STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function idbSet(k,v){const db=await idb();return new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readwrite');t.objectStore(IDB_STORE).put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+async function idbGet(k){const db=await idb();return new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readonly');const q=t.objectStore(IDB_STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});}
+async function idbDel(k){const db=await idb();return new Promise(res=>{const t=db.transaction(IDB_STORE,'readwrite');t.objectStore(IDB_STORE).delete(k);t.oncomplete=res;});}
+
+const LS_KEY='projector-state-v1';
+let state=load()||{activeListId:'team',autoAdvance:false,lists:[
+  {id:'team',name:'רשימה 1',icon:'⭐',items:[]},{id:'clubs',name:'רשימה 2',icon:'🎬',items:[]}]};
+if(state.volume==null)state.volume=1; if(!state.fade)state.fade=false; if(!state.loop)state.loop=false; if(!state.bannerPersist)state.bannerPersist=false; if(!state.standbyAudio)state.standbyAudio=false; if(!state.fitMode)state.fitMode='blur';
+function load(){try{return JSON.parse(localStorage.getItem(LS_KEY));}catch(e){return null;}}
+function save(){localStorage.setItem(LS_KEY,JSON.stringify(state));}
+
+const liveHandles=new Map(),liveFiles=new Map(),urlCache=new Map();
+let uidSeq=Date.now();
+function uid(){return 'v'+(uidSeq++).toString(36)+Math.floor(Math.random()*1e4).toString(36);}
+const el=id=>document.getElementById(id);
+const listsEl=el('lists'),queueEl=el('queue'),video=el('video'),monitor=el('monitor');
+const qName=el('qName'),qIcon=el('qIcon'),qCount=el('qCount'),qTotal=el('qTotal'),monEmpty=el('monEmpty'),lower3=el('lower3');
+const monChip=el('monChip'),monChipTxt=el('monChipTxt'),monCount=el('monCount'),probe=el('probe');
+
+let playing={listId:null,itemId:null},lastLoaded=null,projectorWin=null,outputOpen=false,screenState='live';
+
+function activeList(){return state.lists.find(l=>l.id===state.activeListId)||state.lists[0];}
+function listById(id){return state.lists.find(l=>l.id===id);}
+function itemByIds(l,i){const L=listById(l);return L&&L.items.find(x=>x.id===i);}
+
+/* -------- projector comms -------- */
+CHAN.onmessage=e=>{
+  const m=e.data; if(m.to&&m.to!=='control')return;
+  if(m.type==='hello'){
+    outputOpen=true; updateProjectorUI(); pushOutputSettings();
+    if(lastLoaded)CHAN.postMessage({type:'load',to:'output',name:lastLoaded.name,file:lastLoaded.file,play:!video.paused,kind:lastLoaded.kind});
+    if(screenState==='standby')CHAN.postMessage({type:'standby',to:'output',on:true});
+    else if(screenState==='black')CHAN.postMessage({type:'black',to:'output',on:true});
+  }
+  else if(m.type==='bye'){ outputOpen=false; updateProjectorUI(); }
+  else if(m.type==='ended'){ if(state.loop)return; if(state.autoAdvance)playNext(); else setPlay(false); }
+};
+function pushOutputSettings(){ CHAN.postMessage({type:'volume',to:'output',v:state.volume}); CHAN.postMessage({type:'fade',to:'output',on:state.fade}); CHAN.postMessage({type:'loop',to:'output',on:state.loop}); CHAN.postMessage({type:'standbyAudio',to:'output',on:state.standbyAudio}); CHAN.postMessage({type:'fit',to:'output',mode:state.fitMode}); CHAN.postMessage({type:'banner',to:'output',persist:state.bannerPersist,text:lastLoaded?lastLoaded.name:''}); sendStandbyToOutput(); }
+function updateProjectorUI(){
+  const b=el('btnProjector'); b.classList.toggle('on',outputOpen); b.querySelector('.lbl').textContent=outputOpen?'מקרן מחובר':'תצוגת מקרן';
+  video.muted=outputOpen; el('previewTag').classList.toggle('hidden',!outputOpen);
+  const st=el('stProjector'); st.classList.toggle('live',outputOpen); st.querySelector('span:last-child').textContent=outputOpen?'מקרן מחובר · הקול יוצא למקרן':'מקרן מנותק';
+}
+el('btnProjector').addEventListener('click',()=>{
+  if(projectorWin&&!projectorWin.closed){projectorWin.focus();return;}
+  projectorWin=window.open(location.pathname+'?view=output','openstage_projector','width=1280,height=720');
+  if(!projectorWin){toast('הדפדפן חסם את החלון — אפשרי חלונות קופצים');return;}
+  toast('נפתח חלון מקרן — גררי אותו למסך המקרן ולחצי "מסך מלא"');
+  setTimeout(()=>CHAN.postMessage({type:'ping',to:'output'}),400);
+});
+
+/* -------- output controls -------- */
+let standbyPreviewUrl=null;
+async function ensureStandbyPreview(){
+  const holder=el('monStandbyVid');
+  if(holder.dataset.loaded==='1') return;
+  const f=await getStandbyFile(); if(!f) return;
+  if(standbyPreviewUrl) URL.revokeObjectURL(standbyPreviewUrl);
+  standbyPreviewUrl=URL.createObjectURL(f);
+  if(state.standbyKind==='image'){ el('monStandbyImg').src=standbyPreviewUrl; }
+  else { holder.src=standbyPreviewUrl; }
+  holder.dataset.loaded='1';
+}
+function resetStandbyPreview(){ el('monStandbyVid').dataset.loaded=''; if(screenState==='standby') applyControlScreen(); }
+function updateScreenIndicator(){ applyControlScreen(); }  // תאימות לאחור
+function applyControlScreen(){
+  const isBlack=screenState==='black', isStandby=screenState==='standby';
+  const sv=el('monStandbyVid'), im=el('monStandbyImg'), chip=el('monStateChip');
+  const stbyImg = state.standbyKind==='image';
+  el('monBlack').style.opacity=isBlack?'1':'0';
+  if(isStandby){ ensureStandbyPreview().then(()=>{
+      im.style.display = stbyImg?'block':'none';
+      if(stbyImg){ sv.style.opacity='0'; sv.pause(); }
+      else { sv.muted = !state.standbyAudio || outputOpen; sv.volume=state.volume; sv.style.opacity='1'; sv.play().catch(()=>{}); }
+    }); }
+  else { sv.style.opacity='0'; sv.pause(); im.style.display='none'; }
+  // מסתירים את תווית "מוקרן כעת" כשמצב מיוחד פעיל
+  monChip.style.opacity=(isBlack||isStandby)?'0':'1';
+  if(isBlack){ chip.classList.remove('hidden'); chip.classList.add('blk'); chip.textContent='◼ מסך שחור — הקהל רואה שחור'; }
+  else if(isStandby){ chip.classList.remove('hidden'); chip.classList.remove('blk'); chip.textContent=state.standbyName?('⏸ מסך המתנה · '+state.standbyName):'⏸ מסך המתנה (לוגו)'; }
+  else chip.classList.add('hidden');
+  syncMonBg();
+}
+function setScreen(s){ // 'live'|'black'|'standby'
+  screenState=s;
+  el('btnBlack').classList.toggle('on',s==='black');
+  el('btnStandby').classList.toggle('on',s==='standby');
+  updateScreenIndicator();
+  if(!outputOpen && s!=='live'){ toast('כדי להציג על המקרן — פתחי קודם "תצוגת מקרן" (הכפתור למעלה)'); return; }
+  if(outputOpen){
+    if(s==='standby') sendStandbyToOutput(); // מוודאים שסרטון ההמתנה נשלח למקרן
+    CHAN.postMessage({type:'black',to:'output',on:s==='black'});
+    if(s!=='black') CHAN.postMessage({type:'standby',to:'output',on:s==='standby'});
+  }
+}
+el('btnBlack').addEventListener('click',()=>{ const on=screenState!=='black'; setScreen(on?'black':'live'); if(outputOpen)toast(on?'מסך שחור פעיל במקרן':'חזרה לסרטון'); });
+el('btnStandby').addEventListener('click',()=>{ const on=screenState!=='standby'; setScreen(on?'standby':'live'); if(outputOpen)toast(on?(state.standbyName?'מסך המתנה מוצג במקרן':'לוגו המתנה מוצג'):'חזרה לסרטון'); });
+el('btnBanner').addEventListener('click',()=>{
+  state.bannerPersist=!state.bannerPersist; save();
+  el('btnBanner').classList.toggle('on',state.bannerPersist);
+  if(outputOpen)CHAN.postMessage({type:'banner',to:'output',persist:state.bannerPersist,text:lastLoaded?lastLoaded.name:'',flash:true});
+  toast(state.bannerPersist?'באנר שם — מוצג קבוע':'באנר שם — יופיע לרגע בכל סרטון');
+});
+el('btnFade').addEventListener('click',()=>{ state.fade=!state.fade; save(); el('btnFade').classList.toggle('on',state.fade); if(outputOpen)CHAN.postMessage({type:'fade',to:'output',on:state.fade}); toast(state.fade?'מעבר רך מופעל':'מעבר רך כבוי'); });
+el('btnLoop').addEventListener('click',()=>{ state.loop=!state.loop; save(); el('btnLoop').classList.toggle('on',state.loop); video.loop=state.loop; if(outputOpen)CHAN.postMessage({type:'loop',to:'output',on:state.loop}); toast(state.loop?'לולאה מופעלת':'לולאה כבויה'); });
+el('vol').addEventListener('input',e=>{ state.volume=e.target.value/100; save(); video.volume=state.volume; el('ctlsound').volume=state.volume; if(outputOpen)CHAN.postMessage({type:'volume',to:'output',v:state.volume}); });
+
+/* -------- סרטון המתנה (standby media) -------- */
+let standbyHandle=null, standbyFile=null;
+async function getStandbyFile(){
+  if(standbyFile) return standbyFile;
+  let h=standbyHandle; if(!h){ try{ h=await idbGet('standby-media'); }catch(_){} if(h) standbyHandle=h; }
+  if(h){ if(await ensurePermission(h)){ standbyFile=await h.getFile(); return standbyFile; } }
+  return null;
+}
+async function sendStandbyToOutput(){ if(!outputOpen)return; const f=await getStandbyFile(); if(f) CHAN.postMessage({type:'standbyMedia',to:'output',file:f,kind:state.standbyKind||'video'}); }
+function updateStandbyUI(){ const b=el('btnSetStandby'); const has=!!state.standbyName; b.classList.toggle('on',has); el('setStandbyLbl').textContent=has?state.standbyName:'מדיית המתנה'; }
+el('btnSetStandby').addEventListener('click',async()=>{
+  if(SUPPORTS_FS){
+    let h; try{ [h]=await window.showOpenFilePicker({multiple:false,types:[{description:'סרטון או תמונה',accept:{'video/*':['.mp4','.mov','.m4v','.webm','.avi','.mkv','.ogv'],'image/*':['.jpg','.jpeg','.png','.gif','.webp','.bmp','.heic','.avif']}}]}); }catch(e){return;}
+    standbyHandle=h; try{await idbSet('standby-media',h);}catch(_){}
+    const f=await h.getFile(); standbyFile=f; state.standbyName=cleanName(f.name); state.standbyKind=mediaKind(f); save();
+  } else { el('standbyPicker').click(); return; }
+  updateStandbyUI(); resetStandbyPreview(); sendStandbyToOutput(); toast('מדיית המתנה נשמרה ✓ — לחצי "לוגו המתנה" כדי להציג');
+});
+el('standbyPicker').addEventListener('change',e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f)return;
+  standbyFile=f; state.standbyName=cleanName(f.name); state.standbyKind=mediaKind(f); save();
+  updateStandbyUI(); resetStandbyPreview(); sendStandbyToOutput(); toast('מדיית המתנה נשמרה ✓ — לחצי "לוגו המתנה" כדי להציג');
+});
+el('btnStandbyAudio').addEventListener('click',()=>{
+  state.standbyAudio=!state.standbyAudio; save();
+  el('btnStandbyAudio').classList.toggle('on',state.standbyAudio);
+  if(outputOpen)CHAN.postMessage({type:'standbyAudio',to:'output',on:state.standbyAudio});
+  if(screenState==='standby')applyControlScreen();
+  toast(state.standbyAudio?'קול בהמתנה מופעל — יישמע על המקרן':'קול בהמתנה כבוי');
+});
+
+/* -------- סאונד (ג'ינגל/מוזיקת מעברים) -------- */
+let soundHandle=null, soundFile=null, soundUrl=null, soundPlaying=false;
+async function getSoundFile(){
+  if(soundFile) return soundFile;
+  let h=soundHandle; if(!h){ try{ h=await idbGet('sound-media'); }catch(_){} if(h) soundHandle=h; }
+  if(h){ if(await ensurePermission(h)){ soundFile=await h.getFile(); return soundFile; } }
+  // ברירת מחדל: סאונד המובנה (מגיע עם התוכנה)
+  if(CONFIG.builtInSound){ try{ const r=await fetch(CONFIG.builtInSound,{cache:'reload'}); if(r.ok){ const b=await r.blob(); if(b.size){ soundFile=new File([b],'sound',{type:b.type||'audio/mpeg'}); return soundFile; } } }catch(_){} }
+  return null;
+}
+async function sendSoundToOutput(){ if(!outputOpen)return; const f=await getSoundFile(); if(f) CHAN.postMessage({type:'soundMedia',to:'output',file:f}); }
+function updateSoundUI(){ el('btnSoundFile').classList.toggle('on',!!state.soundName); el('soundFileLbl').textContent=state.soundName?('קובץ: '+state.soundName):'החלף קובץ'; el('btnSound').classList.toggle('on',soundPlaying); el('soundLbl').textContent = soundPlaying ? '⏹ עצור סאונד' : (state.soundName||'סאונד'); }
+async function playSound(on){
+  // הסאונד מתנגן מחלון השליטה עצמו (תמיד נשמע) — כך זה אמין ולא תלוי בחלון המקרן.
+  // במחשב אחד כל האודיו יוצא לאותו רמקול ממילא, אז מספיק לנגן פעם אחת.
+  const a=el('ctlsound');
+  if(on){
+    const f=await getSoundFile(); if(!f){ toast('לא נמצא קובץ סאונד — נסי "החלף קובץ"'); return; }
+    if(a.dataset.loaded!=='1'){ if(soundUrl)URL.revokeObjectURL(soundUrl); soundUrl=URL.createObjectURL(f); a.src=soundUrl; a.dataset.loaded='1'; }
+    a.loop=true; a.muted=false; a.volume=state.volume;
+    try{ await a.play(); soundPlaying=true; }
+    catch(err){ soundPlaying=false; toast('לא הצלחתי לנגן — לחצי פעם אחת על החלון ואז שוב על הסאונד'); }
+  } else {
+    a.pause(); soundPlaying=false;
+  }
+  updateSoundUI();
+}
+el('btnSound').addEventListener('click',()=>{ playSound(!soundPlaying); });
+el('btnSoundFile').addEventListener('click',async()=>{
+  if(SUPPORTS_FS){
+    let h; try{ [h]=await window.showOpenFilePicker({multiple:false,types:[{description:'אודיו',accept:{'audio/*':['.mp3','.wav','.m4a','.aac','.ogg','.oga','.flac','.opus']}}]}); }catch(e){return;}
+    soundHandle=h; try{await idbSet('sound-media',h);}catch(_){}
+    const f=await h.getFile(); soundFile=f; state.soundName=cleanName(f.name); save();
+  } else { el('soundPicker').click(); return; }
+  el('ctlsound').dataset.loaded=''; updateSoundUI(); sendSoundToOutput(); toast('קובץ הסאונד נשמר ✓ — לחצי "סאונד" כדי לנגן');
+});
+el('soundPicker').addEventListener('change',e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f)return;
+  soundFile=f; state.soundName=cleanName(f.name); save();
+  el('ctlsound').dataset.loaded=''; updateSoundUI(); sendSoundToOutput(); toast('קובץ הסאונד נשמר ✓ — לחצי "סאונד" כדי לנגן');
+});
+
+/* -------- מסגור (fit mode) -------- */
+const FIT_LABELS={blur:'רקע מטושטש',contain:'שוליים שחורים',cover:'מילוי (חיתוך)'};
+const FIT_ORDER=['blur','contain','cover'];
+function updateFitUI(){ el('fitLbl').textContent='מסגור: '+(FIT_LABELS[state.fitMode]||'רקע מטושטש'); }
+function applyFitControl(){
+  const v=el('video'), sv=el('monStandbyVid'), im=el('monImg');
+  const fit = state.fitMode==='cover'?'cover':'contain';
+  v.style.objectFit=fit; sv.style.objectFit=fit; im.style.objectFit=fit;
+  const mask = state.fitMode==='blur' ? 'linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%)' : '';
+  v.style.webkitMaskImage=mask; v.style.maskImage=mask;
+  im.style.webkitMaskImage=mask; im.style.maskImage=mask;
+  sv.style.webkitMaskImage=''; sv.style.maskImage='';
+  syncMonBg();
+}
+let monBgTimer=null, monBgctx=null;
+function drawMonBg(){
+  const c=el('monBgCanvas'); if(!monBgctx)monBgctx=c.getContext('2d');
+  const img=curIsImage(); const s = img?el('monImg'):el('video');
+  const ok = img ? (s.complete && s.naturalWidth) : (s.videoWidth && s.readyState>=2);
+  if(!ok) return;
+  try{ monBgctx.drawImage(s,0,0,64,36); monBgctx.fillStyle='rgba(0,0,0,0.25)'; monBgctx.fillRect(0,0,64,36); }catch(_){}
+}
+function syncMonBg(){
+  const c=el('monBgCanvas');
+  const hasMedia = !!el('video').getAttribute('src') || (curIsImage() && !!el('monImg').getAttribute('src'));
+  const on = state.fitMode==='blur' && screenState==='live' && hasMedia;
+  c.style.opacity = on?'1':'0';
+  if(on){ if(!monBgTimer){ drawMonBg(); monBgTimer=setInterval(drawMonBg,80); } }
+  else if(monBgTimer){ clearInterval(monBgTimer); monBgTimer=null; }
+}
+el('btnFit').addEventListener('click',()=>{
+  const i=FIT_ORDER.indexOf(state.fitMode); state.fitMode=FIT_ORDER[(i+1)%FIT_ORDER.length]; save();
+  updateFitUI(); applyFitControl(); if(outputOpen)CHAN.postMessage({type:'fit',to:'output',mode:state.fitMode});
+  toast('מסגור: '+FIT_LABELS[state.fitMode]);
+});
+
+/* -------- add files -------- */
+async function pickFiles(){
+  const list=activeList();
+  if(SUPPORTS_FS){
+    let handles; try{handles=await window.showOpenFilePicker({multiple:true,types:[{description:'סרטונים ותמונות',accept:{'video/*':['.mp4','.mov','.m4v','.webm','.avi','.mkv','.ogv'],'image/*':['.jpg','.jpeg','.png','.gif','.webp','.bmp','.heic','.avif']}}]});}catch(e){return;}
+    for(const h of handles){const key=uid();liveHandles.set(key,h);try{await idbSet(key,h);}catch(e){}const f=await h.getFile();list.items.push({id:uid(),key,name:cleanName(f.name),size:f.size,kind:mediaKind(f)});}
+  } else { el('filePicker').click(); return; }
+  save(); renderQueue(); renderLists(); renderNowNext(); scanDurations(); toast('נוספו קבצים ✓');
+}
+el('filePicker').addEventListener('change',e=>{
+  const list=activeList();
+  for(const f of e.target.files){const key=uid();liveFiles.set(key,f);list.items.push({id:uid(),key,name:cleanName(f.name),size:f.size,kind:mediaKind(f)});}
+  e.target.value=''; save(); renderQueue(); renderLists(); renderNowNext(); scanDurations();
+  if(list.items.length)toast('נוספו קבצים ✓');
+});
+function cleanName(n){return n.replace(/\.[^.]+$/,'');}
+function fmtSize(b){if(!b)return '';const mb=b/1048576;return mb>=1000?(mb/1024).toFixed(1)+' GB':mb.toFixed(0)+' MB';}
+function fmtTime(s){if(!isFinite(s)||s<0)s=0;const m=Math.floor(s/60),ss=Math.floor(s%60);return m+':'+String(ss).padStart(2,'0');}
+function fmtLong(s){if(!isFinite(s)||s<0)s=0;const h=Math.floor(s/3600),m=Math.floor(s%3600/60),ss=Math.floor(s%60);return h?h+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'):m+':'+String(ss).padStart(2,'0');}
+
+/* -------- files -------- */
+async function getFile(item){
+  let file=liveFiles.get(item.key);
+  if(!file){let h=liveHandles.get(item.key);if(!h){try{h=await idbGet(item.key);}catch(e){}if(h)liveHandles.set(item.key,h);}if(h){if(await ensurePermission(h))file=await h.getFile();}}
+  return file||null;
+}
+async function ensurePermission(h){try{const o={mode:'read'};if((await h.queryPermission(o))==='granted')return true;if((await h.requestPermission(o))==='granted')return true;}catch(e){}return false;}
+async function relinkAll(){
+  if(!SUPPORTS_FS){toast('בדפדפן הזה מוסיפים סרטונים מחדש בכל פעם');return;}
+  let ok=0,miss=0;
+  for(const l of state.lists)for(const it of l.items){let h=liveHandles.get(it.key);if(!h){try{h=await idbGet(it.key);}catch(e){}}if(h){liveHandles.set(it.key,h);if(await ensurePermission(h))ok++;else miss++;}else miss++;}
+  renderQueue(); scanDurations(); toast(ok?`חוברו ${ok} קבצים ✓`+(miss?` (${miss} חסרים)`:''):'לא נמצאו קבצים לחיבור');
+}
+
+/* -------- duration scan -------- */
+let scanning=false;
+async function scanDurations(){
+  if(scanning)return; scanning=true;
+  try{
+    for(const l of state.lists){
+      for(const it of l.items){
+        if(it.dur!=null)continue;
+        if(it.kind==='image'){ it.dur=IMG_HOLD; continue; }
+        const f=await getFile(it); if(!f){continue;}
+        const url=URL.createObjectURL(f);
+        const d=await new Promise(res=>{ probe.onloadedmetadata=()=>res(probe.duration); probe.onerror=()=>res(null); probe.src=url; });
+        URL.revokeObjectURL(url);
+        if(d&&isFinite(d)){ it.dur=d; }
+        else { it.dur=0; }
+      }
+    }
+    save(); renderQueue();
+  } finally { scanning=false; }
+}
+
+/* -------- playback -------- */
+function setPlay(isPlaying){ const p=el('playIcon'); if(p)p.outerHTML=(isPlaying?ICO.pause:ICO.play).replace('<svg','<svg id="playIcon"'); }
+function setChip(live,txt){ monChip.classList.toggle('live',live); monChipTxt.textContent=txt; }
+
+let imageTimer=null, imageTick=null;
+function clearImageTimers(){ if(imageTimer){clearTimeout(imageTimer);imageTimer=null;} if(imageTick){clearInterval(imageTick);imageTick=null;} }
+function startImageProgress(){
+  el('tcCur').textContent='0:00'; monCount.classList.remove('warn','danger');
+  if(state.autoAdvance){
+    const startT=Date.now();
+    imageTick=setInterval(()=>{ const e=(Date.now()-startT)/1000; const rem=Math.max(0,IMG_HOLD-e); const p=Math.min(1,e/IMG_HOLD); el('trackFill').style.width=(p*100)+'%'; el('trackKnob').style.left=(p*100)+'%'; el('tcRem').textContent='-'+fmtTime(rem); monCount.textContent='-'+fmtTime(rem); },160);
+    imageTimer=setTimeout(()=>playNext(), IMG_HOLD*1000);
+  } else { el('trackFill').style.width='0%'; el('tcRem').textContent=''; monCount.textContent='🖼️ תמונה'; }
+}
+async function playItem(listId,itemId){
+  const item=itemByIds(listId,itemId); if(!item)return;
+  const file=await getFile(item); if(!file){toast('לא הצלחתי לפתוח את הקובץ — נסי "חבר קבצים" או הוסיפי מחדש');return;}
+  playing={listId,itemId}; lastLoaded={name:item.name,file,kind:item.kind};
+  if(screenState!=='live') setScreen('live');
+  clearImageTimers();
+  const url=urlCache.get(item.key)||URL.createObjectURL(file); urlCache.set(item.key,url);
+  monEmpty.style.display='none'; monitor.classList.add('playing'); lower3.textContent=item.name;
+  if(item.kind==='image'){
+    try{video.pause();}catch(_){} video.removeAttribute('src');
+    el('monImg').src=url; el('monImg').style.display='block'; el('video').style.display='none';
+    setChip(true,'תמונה'); setPlay(false);
+    startImageProgress();
+  } else {
+    if(soundPlaying) playSound(false); // עוצרים ג'ינגל מעברים כשמתחיל סרטון עם קול
+    el('monImg').style.display='none'; el('video').style.display='';
+    video.src=url; video.muted=outputOpen; video.volume=state.volume; video.loop=state.loop;
+    setChip(true,'מוקרן כעת'); video.play().catch(()=>{}); setPlay(true);
+  }
+  applyFitControl();
+  if(outputOpen){ CHAN.postMessage({type:'load',to:'output',name:item.name,file,play:true,kind:item.kind}); CHAN.postMessage({type:'banner',to:'output',persist:state.bannerPersist,text:item.name,flash:true}); }
+  renderQueue(); renderLists(); renderNowNext();
+}
+function curIsImage(){ return lastLoaded && lastLoaded.kind==='image'; }
+function currentIndex(){const l=listById(playing.listId);if(!l)return -1;return l.items.findIndex(i=>i.id===playing.itemId);}
+function playNext(){const l=listById(playing.listId)||activeList();const idx=currentIndex();if(idx>=0&&idx<l.items.length-1)playItem(l.id,l.items[idx+1].id);else if(idx<0&&l.items.length)playItem(l.id,l.items[0].id);else toast('זה הסרטון האחרון ברשימה');}
+function playPrev(){const l=listById(playing.listId)||activeList();const idx=currentIndex();if(idx>0)playItem(l.id,l.items[idx-1].id);else toast('זה הסרטון הראשון ברשימה');}
+function togglePlay(){
+  if(curIsImage()){ if(imageTimer||imageTick){ clearImageTimers(); setChip(true,'תמונה'); } else { startImageProgress(); } return; }
+  if(!video.src){const l=activeList();if(l.items.length)playItem(l.id,l.items[0].id);return;}
+  if(video.paused){video.play();if(outputOpen)CHAN.postMessage({type:'play',to:'output'});setPlay(true);setChip(true,'מוקרן כעת');}
+  else{video.pause();if(outputOpen)CHAN.postMessage({type:'pause',to:'output'});setPlay(false);setChip(false,'מושהה');}
+}
+video.addEventListener('ended',()=>{if(!outputOpen){if(state.loop)return;if(state.autoAdvance)playNext();else{setPlay(false);setChip(false,'הסתיים');}}});
+video.addEventListener('play',()=>{setPlay(true);syncMonBg();});
+video.addEventListener('pause',()=>{if(!video.ended)setPlay(false);syncMonBg();});
+video.addEventListener('timeupdate',()=>{updateScrub();syncMonBg();});
+video.addEventListener('loadedmetadata',updateScrub);
+
+/* -------- scrub / countdown -------- */
+function updateScrub(){
+  const d=video.duration||0,c=video.currentTime||0,rem=d?d-c:0,p=d?Math.min(1,c/d):0;
+  el('trackFill').style.width=(p*100)+'%'; el('trackKnob').style.left=(p*100)+'%';
+  el('tcCur').textContent=fmtTime(c);
+  el('tcRem').textContent=d?('-'+fmtTime(rem)):'0:00';
+  monCount.textContent=d?('-'+fmtTime(rem)):'0:00';
+  monCount.classList.toggle('danger', d>0 && rem<=5);
+  monCount.classList.toggle('warn', d>0 && rem>5 && rem<=10);
+}
+(function scrubSeek(){
+  const track=el('track');let dragging=false;
+  function seekAt(x){const r=track.getBoundingClientRect();let f=(x-r.left)/r.width;f=Math.max(0,Math.min(1,f));if(video.duration){const t=f*video.duration;video.currentTime=t;if(outputOpen)CHAN.postMessage({type:'seek',to:'output',t});updateScrub();}}
+  track.addEventListener('pointerdown',e=>{dragging=true;track.setPointerCapture(e.pointerId);seekAt(e.clientX);});
+  track.addEventListener('pointermove',e=>{if(dragging)seekAt(e.clientX);});
+  track.addEventListener('pointerup',()=>dragging=false);
+})();
+
+/* -------- sidebar -------- */
+function renderLists(){
+  listsEl.innerHTML='';
+  state.lists.forEach(l=>{
+    const d=document.createElement('div');
+    d.className='list-item'+(l.id===state.activeListId?' active':'');
+    d.innerHTML=`<span class="li-ico">${l.icon||'🎞️'}</span><span class="li-name">${escapeHtml(l.name)}</span><span class="li-count">${l.items.length}</span><button class="li-menu" title="אפשרויות">${ICO.menu}</button>`;
+    d.addEventListener('click',e=>{if(e.target.closest('.li-menu')){listMenu(l,e);return;}state.activeListId=l.id;save();renderAll();});
+    d.addEventListener('dragover',e=>{if(dragData){e.preventDefault();d.classList.add('drop-target');}});
+    d.addEventListener('dragleave',()=>d.classList.remove('drop-target'));
+    d.addEventListener('drop',e=>{d.classList.remove('drop-target');if(dragData){e.preventDefault();moveItemToList(dragData.listId,dragData.itemId,l.id);}});
+    listsEl.appendChild(d);
+  });
+}
+function listMenu(l,e){
+  e.stopPropagation();
+  const a=prompt(`רשימה: "${l.name}"\n\nהקלידי מספר:\n1 = שינוי שם\n2 = שינוי אייקון\n3 = מחיקת הרשימה`,'');
+  if(a==='1'){const n=prompt('שם חדש:',l.name);if(n&&n.trim()){l.name=n.trim();save();renderAll();}}
+  else if(a==='2'){const ic=prompt('אייקון (אמוג׳י):',l.icon||'🎞️');if(ic){l.icon=ic.trim()||'🎞️';save();renderAll();}}
+  else if(a==='3'){if(state.lists.length<=1){alert('חייבת להישאר לפחות רשימה אחת.');return;}if(confirm(`למחוק את "${l.name}"? הסרטונים יוסרו מהתוכנה (הקבצים במחשב לא נמחקים).`)){state.lists=state.lists.filter(x=>x.id!==l.id);if(state.activeListId===l.id)state.activeListId=state.lists[0].id;save();renderAll();}}
+}
+
+/* -------- queue -------- */
+function renderQueue(){
+  const l=activeList(); qName.textContent=l.name; qIcon.textContent=l.icon||'🎞️';
+  qCount.textContent=l.items.length?`${l.items.length} סרטונים`:'';
+  const known=l.items.filter(i=>i.dur>0); const total=known.reduce((s,i)=>s+i.dur,0);
+  if(known.length){ qTotal.classList.remove('hidden'); qTotal.textContent=`⏱ ${fmtLong(total)}${known.length<l.items.length?'+':''} סה״כ`; } else qTotal.classList.add('hidden');
+  queueEl.innerHTML='';
+  if(!l.items.length){const e=document.createElement('div');e.className='empty-queue';e.innerHTML=`${ICO.film}<div><b>הרשימה ריקה</b></div><div class="sub">לחצי על <b>הוסף סרטונים</b>, או גררי קבצי וידאו לכל מקום בחלון</div>`;queueEl.appendChild(e);return;}
+  const nextId=nextUpId();
+  l.items.forEach((it,i)=>{
+    const isPlaying=playing.listId===l.id&&playing.itemId===it.id;
+    const isNext=it.id===nextId&&!isPlaying;
+    const r=document.createElement('div');
+    r.className='row'+(isPlaying?' playing':'')+(isNext?' next':''); r.draggable=true;
+    const isImg=it.kind==='image';
+    const sub=isPlaying?`<div class="rsub badge now">● מוצג כעת</div>`:isNext?`<div class="rsub badge next">⏭ הבא בתור</div>`:`<div class="rsub">${isImg?'🖼️ תמונה  ·  ':(it.dur>0?fmtTime(it.dur)+'  ·  ':'')}${fmtSize(it.size)}</div>`;
+    const durTag=isImg?`<span class="dur">IMG</span>`:(it.dur>0?`<span class="dur">${fmtTime(it.dur)}</span>`:'');
+    r.innerHTML=`<span class="grip" title="גררי לסידור מחדש">${ICO.grip}</span><span class="idx">${String(i+1).padStart(2,'0')}</span><div class="thumb">${isImg?ICO.img:ICO.film}${durTag}</div><div class="rmeta"><div class="rname">${escapeHtml(it.name)}</div>${sub}</div><div class="rowbtns"><button class="rbtn play" title="הקרן">${ICO.play}</button><button class="rbtn copy" title="שכפול לרשימה אחרת">${ICO.copy}</button><button class="rbtn edit" title="שינוי שם / באנר">${ICO.edit}</button><button class="rbtn up" title="למעלה">${ICO.up}</button><button class="rbtn down" title="למטה">${ICO.down}</button><button class="rbtn del" title="הסר">${ICO.del}</button></div>`;
+    r.querySelector('.play').addEventListener('click',e=>{e.stopPropagation();playItem(l.id,it.id);});
+    r.querySelector('.copy').addEventListener('click',e=>{e.stopPropagation();copyItemToList(l,it);});
+    r.querySelector('.edit').addEventListener('click',e=>{e.stopPropagation();renameItem(l,it);});
+    r.querySelector('.up').addEventListener('click',e=>{e.stopPropagation();moveWithin(l,i,i-1);});
+    r.querySelector('.down').addEventListener('click',e=>{e.stopPropagation();moveWithin(l,i,i+1);});
+    r.querySelector('.del').addEventListener('click',e=>{e.stopPropagation();removeItem(l,it);});
+    r.addEventListener('dblclick',()=>playItem(l.id,it.id));
+    attachDrag(r,l,it);
+    queueEl.appendChild(r);
+  });
+}
+function copyItemToList(fromList,it){
+  const others=state.lists.filter(x=>x.id!==fromList.id);
+  if(!others.length){ toast('אין רשימה אחרת להעתיק אליה — צרי רשימה חדשה קודם'); return; }
+  const menu=others.map((x,i)=>`${i+1} = ${x.name}`).join('\n');
+  const a=prompt(`שכפול "${it.name}" לרשימה:\n\n${menu}`,'1');
+  if(a===null) return;
+  const idx=parseInt(a,10)-1; const target=others[idx];
+  if(!target){ toast('בחירה לא תקינה'); return; }
+  target.items.push({id:uid(),key:it.key,name:it.name,size:it.size,dur:it.dur,kind:it.kind});
+  save(); renderLists(); renderQueue();
+  toast(`שוכפל ל"${target.name}" ✓`);
+}
+function renameItem(l,it){
+  const n=prompt('שם הסרטון / שם הקבוצה לבאנר:',it.name);
+  if(n&&n.trim()){ it.name=n.trim(); if(playing.listId===l.id&&playing.itemId===it.id){ lastLoaded&&(lastLoaded.name=it.name); lower3.textContent=it.name; if(outputOpen)CHAN.postMessage({type:'banner',to:'output',persist:state.bannerPersist,text:it.name,flash:true}); } save(); renderQueue(); renderNowNext(); }
+}
+function nextUpId(){const l=listById(playing.listId);if(!l)return activeList().items[0]&&activeList().items[0].id;const idx=l.items.findIndex(i=>i.id===playing.itemId);return idx>=0?(l.items[idx+1]&&l.items[idx+1].id):(l.items[0]&&l.items[0].id);}
+function renderNowNext(){
+  let nowN='—',nextN='—',nextDim=true;
+  const pl=listById(playing.listId);
+  if(pl){const idx=pl.items.findIndex(i=>i.id===playing.itemId);if(idx>=0){nowN=pl.items[idx].name;const nx=pl.items[idx+1];nextN=nx?nx.name:'סוף הרשימה';nextDim=!nx;}}
+  else{const a=activeList();if(a.items.length){nextN=a.items[0].name;nextDim=false;}}
+  const nn=el('nnNow'),nx=el('nnNext'); nn.textContent=nowN; nn.classList.toggle('dim',nowN==='—'); nx.textContent=nextN; nx.classList.toggle('dim',nextDim);
+}
+function moveWithin(l,f,t){if(t<0||t>=l.items.length)return;const[m]=l.items.splice(f,1);l.items.splice(t,0,m);save();renderQueue();renderNowNext();}
+function removeItem(l,it){
+  l.items=l.items.filter(x=>x.id!==it.id);
+  // מוחקים את הקובץ מהזיכרון רק אם אף רשימה אחרת לא מפנה אליו (בגלל שכפולים)
+  const stillUsed=state.lists.some(L=>L.items.some(x=>x.key===it.key));
+  if(!stillUsed){ idbDel(it.key).catch(()=>{}); liveHandles.delete(it.key); liveFiles.delete(it.key); const u=urlCache.get(it.key); if(u){URL.revokeObjectURL(u);urlCache.delete(it.key);} }
+  save();renderQueue();renderLists();renderNowNext();
+}
+function moveItemToList(from,itemId,to){if(from===to)return;const F=listById(from),T=listById(to);const idx=F.items.findIndex(i=>i.id===itemId);if(idx<0)return;const[m]=F.items.splice(idx,1);T.items.push(m);save();renderAll();toast(`הועבר ל"${T.name}"`);}
+
+/* -------- drag -------- */
+let dragData=null;
+function attachDrag(row,list,item){
+  row.addEventListener('dragstart',e=>{if(e.target.closest('.rbtn')){e.preventDefault();return;}dragData={listId:list.id,itemId:item.id};row.style.opacity='.4';e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',item.id);}catch(_){}});
+  row.addEventListener('dragend',()=>{dragData=null;row.style.opacity='';[...queueEl.children].forEach(c=>c.style.boxShadow='');});
+  row.addEventListener('dragover',e=>{if(!dragData||dragData.listId!==list.id)return;e.preventDefault();const r=row.getBoundingClientRect();const below=(e.clientY-r.top)>r.height/2;row.style.boxShadow=below?'0 3px 0 var(--brand-2)':'0 -3px 0 var(--brand-2)';});
+  row.addEventListener('dragleave',()=>row.style.boxShadow='');
+  row.addEventListener('drop',e=>{if(!dragData||dragData.listId!==list.id)return;e.preventDefault();row.style.boxShadow='';const r=row.getBoundingClientRect();const below=(e.clientY-r.top)>r.height/2;const from=list.items.findIndex(i=>i.id===dragData.itemId);if(from<0)return;const[m]=list.items.splice(from,1);let to=list.items.findIndex(i=>i.id===item.id);list.items.splice(below?to+1:to,0,m);save();renderQueue();renderNowNext();});
+}
+/* גרירת קבצים מ-Finder — מכל מקום בחלון */
+function isFileDrag(e){return e.dataTransfer&&Array.prototype.includes.call(e.dataTransfer.types||[],'Files');}
+async function addFilesFromDataTransfer(dt){
+  const list=activeList();
+  // לוכדים סינכרונית גם ידיות וגם קבצים רגילים (ה-DataTransfer תקף רק בזמן האירוע)
+  let handlePromises=[], plainFiles=[...(dt.files||[])];
+  if(SUPPORTS_FS&&dt.items){ for(const it of [...dt.items]){ if(it.kind==='file'&&it.getAsFileSystemHandle) handlePromises.push(it.getAsFileSystemHandle()); } }
+  let added=0;
+  if(handlePromises.length){
+    const handles=await Promise.all(handlePromises.map(p=>p.catch(()=>null)));
+    for(const h of handles){ if(!h||h.kind!=='file')continue; let f; try{f=await h.getFile();}catch(_){continue;} if(!isMedia(f))continue; const key=uid(); liveHandles.set(key,h); try{await idbSet(key,h);}catch(_){}; list.items.push({id:uid(),key,name:cleanName(f.name),size:f.size,kind:mediaKind(f)}); added++; }
+  }
+  // נפילה חיננית: אם דרך הידיות לא הוסיפה כלום — משתמשים בקבצים הרגילים
+  if(added===0){
+    for(const f of plainFiles){ if(isMedia(f)){ const key=uid(); liveFiles.set(key,f); list.items.push({id:uid(),key,name:cleanName(f.name),size:f.size,kind:mediaKind(f)}); added++; } }
+  }
+  if(added){ save(); renderQueue(); renderLists(); renderNowNext(); scanDurations(); toast(`נוספו ${added} קבצים ✓`); }
+  else toast('לא נמצאו קבצי וידאו/תמונה בגרירה');
+}
+function isVideo(f){ return f&&(f.type.startsWith('video/')||/\.(mp4|mov|m4v|webm|avi|mkv|ogv)$/i.test(f.name||'')); }
+function isImage(f){ return f&&(f.type.startsWith('image/')||/\.(jpe?g|png|gif|webp|bmp|heic|heif|avif|svg)$/i.test(f.name||'')); }
+function isAudio(f){ return f&&(f.type.startsWith('audio/')||/\.(mp3|wav|m4a|aac|ogg|oga|flac|opus)$/i.test(f.name||'')); }
+function isMedia(f){ return isVideo(f)||isImage(f); }
+function mediaKind(f){ return isImage(f)?'image':'video'; }
+const IMG_HOLD=8; // שניות ברירת מחדל לתמונה במצב נגינה רציפה
+let dragDepth=0;
+function showDropzone(){ el('dzList').textContent=activeList().name; el('dropzone').classList.add('show'); }
+function hideDropzone(){ dragDepth=0; el('dropzone').classList.remove('show'); }
+document.addEventListener('dragenter',e=>{ if(!isFileDrag(e))return; e.preventDefault(); dragDepth++; showDropzone(); });
+document.addEventListener('dragover',e=>{ if(!isFileDrag(e))return; e.preventDefault(); try{e.dataTransfer.dropEffect='copy';}catch(_){} });
+document.addEventListener('dragleave',e=>{ if(!isFileDrag(e))return; dragDepth=Math.max(0,dragDepth-1); if(dragDepth===0)hideDropzone(); });
+document.addEventListener('drop',e=>{ if(!isFileDrag(e))return; e.preventDefault(); hideDropzone(); addFilesFromDataTransfer(e.dataTransfer); });
+
+el('addList').addEventListener('click',()=>{const name=prompt('שם הרשימה החדשה:','רשימה חדשה');if(!name||!name.trim())return;const icon=prompt('אייקון (אמוג׳י):','🎞️')||'🎞️';const id='l'+uid();state.lists.push({id,name:name.trim(),icon:icon.trim()||'🎞️',items:[]});state.activeListId=id;save();renderAll();});
+
+function renderMode(){const b=el('btnMode');b.classList.toggle('on',state.autoAdvance);const txt=state.autoAdvance?'נגינה רציפה':'עצירה אחרי כל סרטון';el('modeTxt').textContent=txt;el('stMode').textContent=txt;}
+el('btnMode').addEventListener('click',()=>{state.autoAdvance=!state.autoAdvance;save();renderMode();toast(state.autoAdvance?'נגינה רציפה מופעלת':'עצירה אחרי כל סרטון');});
+
+el('btnPlay').addEventListener('click',togglePlay);
+el('btnNext').addEventListener('click',playNext);
+el('btnPrev').addEventListener('click',playPrev);
+el('btnAdd').addEventListener('click',pickFiles);
+el('btnRelink').addEventListener('click',relinkAll);
+el('btnFull').addEventListener('click',()=>{document.fullscreenElement?document.exitFullscreen():monitor.requestFullscreen&&monitor.requestFullscreen();});
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.code==='Space'){e.preventDefault();togglePlay();}
+  else if(e.key==='ArrowLeft'){playNext();}
+  else if(e.key==='ArrowRight'){playPrev();}
+  else if(e.key==='b'||e.key==='B'){el('btnBlack').click();}
+  else if(e.key==='f'||e.key==='F'){el('btnFull').click();}
+});
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+let toastT;function toast(msg){const t=el('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600);}
+function renderAll(){renderLists();renderQueue();renderMode();renderNowNext();}
+
+/* -------- בדיקת מערכת -------- */
+const APP_VERSION='1.3 (סאונד נשמע מהשליטה)';
+async function runSystemCheck(){
+  const rows=[];
+  const add=(cls,txt)=>{ const ic={cok:'✓',cwarn:'⚠️',cbad:'✗',cnone:'○'}[cls]||'○'; rows.push(`<div class="cline"><span class="${cls}">${ic}</span><span>${escapeHtml(txt)}</span></div>`); };
+  try{ localStorage.setItem('__chk','1'); localStorage.removeItem('__chk'); add('cok','אחסון התוכנה תקין — הגדרות ורשימות נשמרות'); }catch(e){ add('cbad','בעיה באחסון — דברים לא יישמרו'); }
+  try{ await idb(); add('cok','זיכרון הקבצים תקין'); }catch(e){ add('cbad','בעיה בזיכרון הקבצים'); }
+  if(CONFIG.builtInSound){ try{ const r=await fetch(CONFIG.builtInSound,{cache:'reload'}); if(r.ok){ const b=await r.blob(); add(b.size?'cok':'cbad',`סאונד מובנה — ${b.size?('נטען ('+Math.round(b.size/1024)+'KB)'):'ריק'}`);} else add('cbad','סאונד מובנה — לא נמצא'); }catch(e){ add('cbad','סאונד מובנה — לא נטען'); } } else add('cnone','סאונד — יש להגדיר קובץ דרך "החלף קובץ"');
+  const tot=state.lists.reduce((s,l)=>s+l.items.length,0);
+  add('cok',`${state.lists.length} רשימות · ${tot} פריטים שמורים`);
+  let linked=0,missing=0;
+  for(const l of state.lists)for(const it of l.items){ let ok=liveFiles.has(it.key)||liveHandles.has(it.key); if(!ok){ try{const h=await idbGet(it.key);ok=!!h;}catch(_){}} ok?linked++:missing++; }
+  if(tot===0) add('cnone','אין עדיין סרטונים ברשימות');
+  else if(missing) add('cwarn',`${linked} קבצים מחוברים · ${missing} דורשים לחיצה על "חבר קבצים"`);
+  else add('cok',`כל ${linked} הקבצים מחוברים וזמינים`);
+  add(outputOpen?'cok':'cnone', outputOpen?'חלון מקרן מחובר':'חלון מקרן לא פתוח כרגע');
+  const bad=rows.filter(r=>r.includes('"cbad"')).length, warn=rows.filter(r=>r.includes('"cwarn"')).length;
+  const sum = bad?`<div class="csum cbad">נמצאו ${bad} בעיות — תעשי רענון קשיח, ואם נשאר תגידי לי</div>`:warn?`<div class="csum cwarn">הכל עובד · יש ${warn} דברים לתשומת לב</div>`:`<div class="csum cok">✓ הכל תקין ונשמר</div>`;
+  el('checkBody').innerHTML=rows.join('')+sum+`<div class="cline" style="border:none;color:var(--mute);margin-top:8px">גרסה: ${APP_VERSION}</div>`;
+  el('checkwrap').classList.add('show');
+}
+el('btnCheck').addEventListener('click',runSystemCheck);
+el('checkClose').addEventListener('click',()=>el('checkwrap').classList.remove('show'));
+el('checkwrap').addEventListener('click',e=>{ if(e.target===el('checkwrap')) el('checkwrap').classList.remove('show'); });
+el('verStamp').textContent='v'+APP_VERSION;
+
+/* clock */
+function tick(){const d=new Date();el('clockT').textContent=d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+setInterval(tick,1000); tick();
+
+(async function init(){
+  renderAll(); updateScrub();
+  el('vol').value=Math.round(state.volume*100); video.volume=state.volume; video.loop=state.loop;
+  el('btnFade').classList.toggle('on',state.fade); el('btnLoop').classList.toggle('on',state.loop); el('btnBanner').classList.toggle('on',state.bannerPersist); el('btnStandbyAudio').classList.toggle('on',state.standbyAudio);
+  el('vol').value=Math.round(state.volume*100); el('ctlsound').volume=state.volume;
+  updateStandbyUI(); updateFitUI(); applyFitControl(); updateSoundUI();
+  if(!SUPPORTS_FS){toast('טיפ: לזכירת קבצים בין הפעלות — פתחי ב-Chrome');}
+  else{ for(const l of state.lists)for(const it of l.items){if(!liveHandles.has(it.key)){try{const h=await idbGet(it.key);if(h)liveHandles.set(it.key,h);}catch(_){}}}
+        try{const sh=await idbGet('standby-media'); if(sh)standbyHandle=sh;}catch(_){}
+        try{const soh=await idbGet('sound-media'); if(soh)soundHandle=soh;}catch(_){} }
+  scanDurations();
+  CHAN.postMessage({type:'ping',to:'output'});
+})();
+
+} // end initControl
+</script>
+</body>
+</html>
