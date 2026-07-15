@@ -25,7 +25,14 @@ h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.03em}
 .he{direction:rtl}
 
 /* ---------------- NAV ---------------- */
-.nav{position:sticky;top:0;z-index:50;background:rgba(236,233,225,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.navright{display:flex;align-items:center;gap:12px}
+.themebtn{width:38px;height:38px;border-radius:999px;border:1px solid var(--line-ink);background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:.12s}
+.themebtn:hover{background:var(--paper-3)}
+.themebtn svg{width:17px;height:17px}
+.themebtn .sun{display:none}
+:root[data-theme="dark"] .themebtn .moon{display:none}
+:root[data-theme="dark"] .themebtn .sun{display:inline}
 .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
 .brand{font-weight:800;font-size:20px;letter-spacing:-.03em}
 .navlinks{display:flex;gap:6px}
@@ -212,5 +219,41 @@ section{padding:56px 0;border-bottom:1px solid var(--line)}
 .qrow .nm{font-weight:700;font-size:14px} .qrow .mt{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);margin-top:2px;letter-spacing:.04em}
 .qrow.live .mt{color:var(--flare)}
 .rmeta{flex:1;min-width:0}
+
+/* ---------------- NIGHT MODE ---------------- */
+:root{ --glass:rgba(236,233,225,.86); }
+:root[data-theme="dark"]{
+  --paper:#0E0D0A;      /* deep warm near-black ground */
+  --paper-2:#181510;    /* raised surface */
+  --paper-3:#050504;    /* sunk */
+  --ink:#EDE8DC;        /* warm off-white text */
+  --ink-soft:#9E9587;
+  --ink-faint:#6C6558;
+  --line:#2A261D;
+  --line-ink:#3D382C;
+  --flare:#FF5A26;      /* brighter orange for dark ground */
+  --flare-deep:#C23A00;
+  --glass:rgba(14,13,10,.84);
+}
+/* keep "emphasis" surfaces DARK in night mode (no bright tiles that spill light) */
+:root[data-theme="dark"] .tile.ink,
+:root[data-theme="dark"] .cell.ink{ background:#211C13; color:var(--ink); }
+:root[data-theme="dark"] .tile.ink .lbl,
+:root[data-theme="dark"] .cell.ink .lbl{ color:var(--ink-faint); }
+:root[data-theme="dark"] .cell.ink .stat .sub,
+:root[data-theme="dark"] .cell.ink .num[style]{ color:var(--ink-soft)!important; }
+:root[data-theme="dark"] .navlinks a.active,
+:root[data-theme="dark"] .pill.on,
+:root[data-theme="dark"] .chip.solid,
+:root[data-theme="dark"] .listitem.active{ background:#28221A; color:var(--ink); border-color:var(--line-ink); }
+:root[data-theme="dark"] .pill,
+:root[data-theme="dark"] .abtn,
+:root[data-theme="dark"] .segwrap,
+:root[data-theme="dark"] .segwrap b{ border-color:var(--line-ink); }
+:root[data-theme="dark"] .btn.o{ border-color:var(--ink-soft); color:var(--ink); }
+:root[data-theme="dark"] .btn.o:hover{ background:var(--ink); color:var(--paper); }
+:root[data-theme="dark"] .switch::after{ background:var(--ink); }
+:root[data-theme="dark"] .metal{ filter:brightness(.62) }
+/* the program monitor stays dark in both themes (as it must on the projector) */
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
