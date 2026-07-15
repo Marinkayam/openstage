@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenStage — Design Language</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="index.html">OpenStage<span class="dot">.</span></a>
+      <nav class="navlinks">
+        <a href="index.html" class="active">Design Language</a>
+        <a href="demo.html">Live Demo</a>
+      </nav>
+      <span class="lbl">V1 · 2026</span>
+    </div>
+  </header>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="ey"><span>Interface Design System</span><span>Grid · Grotesque · One Signal</span></div>
+      <h1 class="title">OpenStage<span class="dot">.</span></h1>
+      <div class="hero-foot">
+        <div>
+          <p>A graphic language for live-control interfaces. Swiss grid, oversized numerals, one hot signal on warm neutral ground.</p>
+          <p class="he">שפה גרפית לממשקי בקרה חיים — גריד, מספרי-ענק, ומבטא כתום אחד.</p>
+        </div>
+        <div class="spec"><span>Helvetica Neue</span><span>SF Mono</span><span>Hairline grid</span><span>1 accent</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section><div class="wrap">
+    <div class="shead"><span class="no">01 /</span><h2>Palette</h2><span class="say">warm neutral · one signal</span></div>
+    <div class="swgrid">
+      <div class="sw"><div class="cchip" style="background:var(--paper)"></div><div class="meta"><div class="role">Paper</div><div class="hex">#ECE9E1 · ground</div></div></div>
+      <div class="sw"><div class="cchip" style="background:var(--paper-2);border-bottom:1px solid var(--line)"></div><div class="meta"><div class="role">Surface</div><div class="hex">#F7F5EF · tiles</div></div></div>
+      <div class="sw"><div class="cchip" style="background:var(--ink)"></div><div class="meta"><div class="role">Ink</div><div class="hex">#1A1712 · type</div></div></div>
+      <div class="sw"><div class="cchip" style="background:var(--flare)"></div><div class="meta"><div class="role">Signal</div><div class="hex">#FA4616 · accent</div></div></div>
+      <div class="sw"><div class="cchip hatchchip"></div><div class="meta"><div class="role">Signal / hatch</div><div class="hex">#B02F00 · fills</div></div></div>
+      <div class="sw"><div class="cchip metal"></div><div class="meta"><div class="role">Metal</div><div class="hex">conic · highlight</div></div></div>
+    </div>
+    <p style="margin-top:20px;max-width:60ch;font-size:14.5px">One accent, used sparingly — for what's <b style="color:var(--ink)">live, primary, or being measured</b>. Everything else is ink on paper. Grey recedes; it is never decorative.</p>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="shead"><span class="no">02 /</span><h2>Typography</h2><span class="say">Helvetica Neue · SF Mono</span></div>
+    <div class="typegrid">
+      <div class="tile typebig">
+        <div class="lbl">Display · numerals set the tone</div>
+        <div class="huge" style="margin-top:14px">72<span class="dot">%</span></div>
+        <div class="huge" style="font-size:clamp(2.2rem,7vw,4.4rem);margin-top:6px">Campaign<span class="dot">.</span></div>
+      </div>
+      <div class="tile scale">
+        <div class="row"><span class="s-d">Display</span><span class="name">HN · 800 · -3%</span></div>
+        <div class="row"><span class="s-h">Heading</span><span class="name">HN · 700 · -2%</span></div>
+        <div class="row"><span class="s-b">Body copy sits calm and readable.</span><span class="name">HN · 500</span></div>
+        <div class="row"><span class="s-m">client: NOVA · 00:42</span><span class="name">MONO · 500</span></div>
+        <div class="row"><span class="lbl">MICRO LABEL</span><span class="name">MONO · .16em</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="shead"><span class="no">03 /</span><h2>The signal &amp; its marks</h2><span class="say">dot · hatch · slash · arrow</span></div>
+    <div class="motifs">
+      <div class="tile motif"><span class="cap">The dot — closes a wordmark</span><div class="bigdot">Aa<span class="dot">.</span></div><span class="lbl">terminal accent</span></div>
+      <div class="tile motif flare" style="background-image:repeating-linear-gradient(45deg,transparent 0 9px,rgba(0,0,0,.22) 9px 12px)"><span class="cap" style="color:#3a1400">Hatch — states &amp; progress</span><div class="bigdot" style="color:#1a0d05">37%</div><span class="lbl" style="color:#3a1400">measured surface</span></div>
+      <div class="tile motif"><span class="cap">Slash &amp; delta — comparisons</span><div class="slashrow">38 <span class="sl">/</span> <span class="dl">+10%</span></div><span class="lbl">since last cue</span></div>
+      <div class="tile motif"><span class="cap">Index &amp; direction</span><div style="font-family:var(--mono);font-size:2.2rem">/03 <span style="font-size:1rem;color:var(--ink-faint)">of 06</span></div>
+        <div class="arrows"><button class="abtn" aria-label="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button><button class="abtn f" aria-label="next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="shead"><span class="no">04 /</span><h2>Components</h2><span class="say">for the control surface</span></div>
+    <div class="comp">
+      <div class="tile compcard"><h3>Buttons</h3><div class="desc">Primary carries the signal. Outline and ghost step back.</div>
+        <div class="stack"><button class="btn p"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Project</button><button class="btn o">Add media</button><button class="btn g">Cancel</button></div></div>
+      <div class="tile compcard"><h3>Pills &amp; segments</h3><div class="desc">Modes and toggles read as pills.</div>
+        <div class="stack"><span class="pill on">Continuous</span><span class="pill">Stop after each</span><span class="segwrap"><b class="on">HE</b><b>EN</b></span></div></div>
+      <div class="tile compcard"><h3>Status chips</h3><div class="desc">Mono, uppercase. State encoded in fill.</div>
+        <div class="stack"><span class="chip live"><span class="rec"></span>ON AIR</span><span class="chip"><span class="rec"></span>READY</span><span class="chip solid">NEXT</span><span class="chip">STANDBY</span></div></div>
+      <div class="tile compcard"><h3>Inputs &amp; switch</h3><div class="desc">Fields, accent swatches, a signal toggle.</div>
+        <div class="stack" style="gap:14px"><span class="field"><span class="k">Name</span><input value="OpenStage" readonly></span><span class="swrow"><i style="background:#FA4616"></i><i style="background:#1A1712"></i><i style="background:#2E7DE0"></i><i style="background:#12B886"></i></span><span class="switch on"></span></div></div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="shead"><span class="no">05 /</span><h2>Data &amp; measures</h2><span class="say">numerals do the work</span></div>
+    <div class="dash">
+      <div class="cell stat"><div class="lbl">Clips in show</div><div><div class="num">37</div><div class="sub">across 2 lists</div></div></div>
+      <div class="cell stat ink"><div class="lbl">Total runtime</div><div><div class="num">12<span class="u">:48</span></div><div class="sub" style="color:#b7b1a4">est. program length</div></div></div>
+      <div class="cell span2 stat flare"><div class="lbl" style="color:#3a1400">Now playing — remaining</div><div class="tc" style="font-size:clamp(2.6rem,7vw,3.6rem)">−0:41</div><div class="track" style="background:rgba(0,0,0,.18)"><i style="background:#1a0d05;width:72%"></i></div></div>
+      <div class="cell"><div class="lbl">Cue index</div><div class="dotmx" style="align-self:center;margin:6px 0"><i></i><i></i><i class="f"></i><i class="o"></i><i class="o"></i><i class="o"></i></div><div class="stat"><div class="sub"><span class="delta">/03</span> of 06 live</div></div></div>
+      <div class="cell"><div class="lbl">Load per set</div><div class="bars" style="align-self:flex-start;margin:8px 0"><i style="height:40%"></i><i style="height:62%"></i><i style="height:30%"></i><i class="f" style="height:100%"></i><i style="height:54%"></i><i style="height:72%"></i></div><div class="sub">peak: set 04</div></div>
+      <div class="cell span2 ink"><div class="lbl">Signal</div><div class="stat"><div class="num" style="color:var(--flare)">1</div><div class="sub" style="color:#b7b1a4;max-width:34ch">One accent, everywhere. It means <b style="color:var(--paper)">live / primary / measured</b> — never decoration.</div></div></div>
+    </div>
+
+    <div class="cta">
+      <div><div class="lbl" style="color:#3a1400">See it move</div><h2>The language, running live<span style="color:#1a0d05">.</span></h2></div>
+      <a class="btn dark" href="demo.html">Open the demo →</a>
+    </div>
+  </div></section>
+
+  <div class="foot-sys wrap">
+    <span class="lbl">OpenStage Design System — V1</span>
+    <span class="lbl">Grotesque · Mono · Hairline grid · One signal<span class="dot">.</span></span>
+  </div>
+</body>
+</html>

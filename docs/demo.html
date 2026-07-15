@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenStage — Live Demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="index.html">OpenStage<span class="dot">.</span></a>
+      <nav class="navlinks">
+        <a href="index.html">Design Language</a>
+        <a href="demo.html" class="active">Live Demo</a>
+      </nav>
+      <span class="lbl">Interactive</span>
+    </div>
+  </header>
+
+  <div class="demo"><div class="wrap">
+    <div class="demohead">
+      <div>
+        <div class="lbl k">Live demo · click to cue</div>
+        <h1>Control console<span class="dot">.</span></h1>
+        <p>A working slice of OpenStage in the new language. Click a clip to put it on air — the program monitor, timers and next-up all update live.</p>
+      </div>
+      <div class="stack">
+        <span class="segwrap" id="modeSeg"><b class="on" data-mode="stop">Stop after each</b><b data-mode="cont">Continuous</b></span>
+      </div>
+    </div>
+
+    <div class="console">
+      <!-- sidebar -->
+      <div class="panel">
+        <div class="ph"><span class="lbl">Playlists</span><span class="lbl" id="totLbl"></span></div>
+        <div class="lists" id="lists"></div>
+      </div>
+
+      <!-- stage -->
+      <div class="stage">
+        <div class="pgm idle" id="pgm">
+          <div class="blackout"></div>
+          <div class="standbyscr"><div class="mk"><b>OpenStage<span class="dot">.</span></b><span>STANDBY</span></div></div>
+          <div class="rowtop">
+            <span class="onair" id="onair"><span class="rec"></span>Ready</span>
+            <span class="lbl" style="color:#8f897c">PGM · 16:9</span>
+          </div>
+          <div class="cuewrap"><div class="cue" id="cue">—</div><div class="cuesub" id="cuesub">no clip cued</div></div>
+          <div class="pbar"><i id="pbar"></i></div>
+          <div class="foot">
+            <div class="transport">
+              <button class="tbtn" id="prev" aria-label="previous"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+              <button class="tbtn play" id="play" aria-label="play"><svg viewBox="0 0 24 24" id="playIco"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="tbtn" id="next" aria-label="next"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/></svg></button>
+            </div>
+            <span class="rem" id="rem">0:00</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="ctlgrid">
+            <div class="nx"><div class="k">Next up</div><div class="v" id="nextup">—</div></div>
+            <span class="chip" id="pBlack">◼ Black</span>
+            <span class="chip" id="pStandby">Standby</span>
+            <span class="chip" id="pSound">Sound</span>
+            <span class="chip" id="pBanner">Banner</span>
+          </div>
+          <div class="stack" style="margin-top:16px;gap:26px">
+            <div><div class="lbl" style="margin-bottom:9px">Fit mode</div><span class="segwrap" id="fitSeg"><b class="on">Blur fill</b><b>Bars</b><b>Crop</b></span></div>
+            <div><div class="lbl" style="margin-bottom:9px">Sound</div><span class="switch" id="volSw" role="switch"></span></div>
+          </div>
+          <div style="margin-top:18px">
+            <div class="lbl" style="margin-bottom:10px">Queue — <span id="qName" style="color:var(--ink)"></span></div>
+            <div class="queue" id="queue"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+<script>
+(function(){
+  var DATA=[
+    {name:'נבחרת', icon:'⭐', clips:[
+      {name:'קבוצת נשר — מקצה קרקע', dur:95},
+      {name:'שגב — איזון וגמישות', dur:132},
+      {name:'נבחרת בוגרות — סיום', dur:150},
+      {name:'כרטיס כותרת', dur:8, img:true}]},
+    {name:'חוגים', icon:'🤸', clips:[
+      {name:'חוג יסודי א׳', dur:110},
+      {name:'חוג מתקדמות', dur:140},
+      {name:'קרדיטים', dur:20, img:true}]}
+  ];
+  var activeList=0, cue=null, playing=false, remaining=0, mode='stop', fit=0;
+  var pills={black:false,standby:false,sound:false,banner:false};
+
+  var $=function(id){return document.getElementById(id);};
+  function fmt(s){s=Math.max(0,Math.round(s));var m=Math.floor(s/60);return m+':'+('0'+(s%60)).slice(-2);}
+  function screen(){return pills.black?'black':pills.standby?'standby':'live';}
+  function clip(){return cue?DATA[cue.list].clips[cue.idx]:null;}
+
+  function renderLists(){
+    var tot=DATA.reduce(function(a,l){return a+l.clips.length;},0);
+    $('totLbl').textContent=tot+' clips';
+    $('lists').innerHTML=DATA.map(function(l,i){
+      return '<div class="listitem'+(i===activeList?' active':'')+'" data-list="'+i+'">'
+        +'<span class="ico">'+l.icon+'</span><span class="nm he">'+l.name+'</span>'
+        +'<span class="ct">'+l.clips.length+'</span></div>';
+    }).join('');
+    $('lists').querySelectorAll('.listitem').forEach(function(el){
+      el.onclick=function(){activeList=+el.dataset.list;render();};
+    });
+  }
+  function nextIdx(){ if(!cue)return null; var c=DATA[cue.list].clips; return cue.idx<c.length-1?cue.idx+1:null; }
+  function renderQueue(){
+    $('qName').textContent=DATA[activeList].name;
+    $('qName').className='he';
+    var live=cue&&cue.list===activeList?cue.idx:-1, nx=nextIdx();
+    $('queue').innerHTML=DATA[activeList].clips.map(function(c,i){
+      var isLive=i===live, isNext=cue&&cue.list===activeList&&i===nx&&!isLive;
+      var mt=isLive?'● ON AIR · '+fmt(c.dur):(isNext?'NEXT · '+fmt(c.dur):(c.img?'IMG · '+fmt(c.dur):fmt(c.dur)));
+      return '<div class="qrow'+(isLive?' live':'')+'" data-i="'+i+'"><span class="idx">'+('0'+(i+1)).slice(-2)+'</span>'
+        +'<span class="th"></span><div class="rmeta"><div class="nm he">'+c.name+'</div><div class="mt">'+mt+'</div></div></div>';
+    }).join('');
+    $('queue').querySelectorAll('.qrow').forEach(function(el){ el.onclick=function(){cueClip(activeList,+el.dataset.i);}; });
+  }
+  function renderStage(){
+    var sc=screen(), c=clip();
+    var pgm=$('pgm');
+    pgm.className='pgm'+((c&&playing&&sc==='live')?'':' idle')+(sc==='black'?' black':'')+(sc==='standby'?' standby':'');
+    $('onair').lastChild.textContent = sc==='black'?'Black on air':sc==='standby'?'Standby':(c?(playing?'On air':'Paused'):'Ready');
+    $('cue').innerHTML = c?('<span class="he">'+c.name+'</span>'):'—';
+    $('cuesub').textContent = c?('list: '+DATA[cue.list].name+' · clip '+(cue.idx+1)+' / '+DATA[cue.list].clips.length):'no clip cued';
+    $('rem').textContent = c?('−'+fmt(remaining)):'0:00';
+    $('pbar').style.width = c?(((c.dur-remaining)/c.dur*100)+'%'):'0';
+    var nx=nextIdx();
+    $('nextup').innerHTML = nx!=null?('<span class="he">'+DATA[cue.list].clips[nx].name+'</span>'):'—';
+    $('playIco').innerHTML = playing?'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';
+    // pills
+    setChip('pBlack', pills.black, 'solid');
+    setChip('pStandby', pills.standby, 'solid');
+    setChip('pSound', pills.sound, 'live');
+    setChip('pBanner', pills.banner, 'solid');
+    $('volSw').classList.toggle('on', pills.sound);
+  }
+  function setChip(id,on,cls){ var el=$(id); el.classList.toggle('solid', on&&cls==='solid'); el.classList.toggle('live', on&&cls==='live'); }
+  function render(){ renderLists(); renderQueue(); renderStage(); }
+
+  function cueClip(list,idx){ cue={list:list,idx:idx}; activeList=list; remaining=DATA[list].clips[idx].dur; playing=true; pills.black=false; pills.standby=false; render(); }
+  function togglePlay(){ if(!cue){ if(DATA[activeList].clips.length) cueClip(activeList,0); return;} playing=!playing; render(); }
+  function step(d){ if(!cue){ if(DATA[activeList].clips.length)cueClip(activeList,0); return;} var c=DATA[cue.list].clips, ni=cue.idx+d; if(ni<0||ni>=c.length)return; cueClip(cue.list,ni); }
+
+  function tick(){ if(!playing||!cue)return; remaining-=1; if(remaining<=0){ if(mode==='cont'){ var ni=nextIdx(); if(ni!=null){cueClip(cue.list,ni);return;} } playing=false; remaining=0; render(); return; } $('rem').textContent='−'+fmt(remaining); var c=clip(); $('pbar').style.width=((c.dur-remaining)/c.dur*100)+'%'; }
+  setInterval(tick,1000);
+
+  // controls
+  $('play').onclick=togglePlay;
+  $('prev').onclick=function(){step(-1);};
+  $('next').onclick=function(){step(1);};
+  ['pBlack','pStandby','pSound','pBanner'].forEach(function(id){
+    $(id).onclick=function(){ var k=id.replace('p','').toLowerCase(); pills[k]=!pills[k];
+      if(k==='black'&&pills.black)pills.standby=false; if(k==='standby'&&pills.standby)pills.black=false; renderStage(); };
+  });
+  $('volSw').onclick=function(){ pills.sound=!pills.sound; renderStage(); };
+  $('modeSeg').querySelectorAll('b').forEach(function(b){ b.onclick=function(){ mode=b.dataset.mode; $('modeSeg').querySelectorAll('b').forEach(function(x){x.classList.toggle('on',x===b);}); }; });
+  $('fitSeg').querySelectorAll('b').forEach(function(b,i){ b.onclick=function(){ fit=i; $('fitSeg').querySelectorAll('b').forEach(function(x){x.classList.toggle('on',x===b);}); }; });
+
+  render();
+})();
+</script>
+</body>
+</html>
